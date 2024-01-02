@@ -1,0 +1,138 @@
+Assessment Center Greenpoint, Brooklyn
+Address
+146 Clay St
+Brooklyn, NY - 11222
+lat:40.736780
+long:-73.952110
+
+Boulevard Residence East Harlem, Manhattan
+Address
+2027 Lexington Avenue
+New York, NY - 10035
+lat:40.803420
+long:-73.937900
+
+Jack Ryan Residence (Chelsea, Manhattan)
+Address
+127 West 25th Street, 6th to 9th Floors
+New York, NY - 10001
+lat:40.744860
+long:-73.992980
+
+Palace Employment Residence (the Bowery, Manhattan)
+Address
+317 Bowery
+New York, NY - 10003
+lat:40.732450
+long:-73.989270
+
+Reaching New Heights Residence (Fordham, Bronx)
+Address
+237 Landing Road
+Bronx, NY - 10468
+lat:40.862620
+long:-73.911280
+
+Homes for the Homeless
+36 Cooper Square,
+New York City, NY 10003
+(212) 529-5252
+lat:40.728250
+long:-73.991400
+
+Bowery Mission
+227 Bowery
+New York City, NY 10002
+(212) 674-3456
+
+The Bowery Mission -Tribeca Campus
+90 Lafayette St
+New York City, NY 10013
+(212) 226-6214
+lat:40.883780
+long:-73.878660
+
+Holy Apostles Soup Kitchen
+296 9th Ave
+New York City, NY 10001
+(212) 924-0167
+lat:40.749360
+long:-73.998980
+
+Grand Central Neighborhood Social Services Corporation (GCNSSC)
+120 East 32nd Steet
+New York City, NY 10016
+(212) 883-0680
+lat:40.745200
+long:-73.981480
+
+Bailey House Inc.
+275 Seventh Avenue
+12th Floor
+New York, NY 10001
+(212) 633-2500
+Provides temporary through permanent emergency housing for people with HIV and AIDS and
+their families, who have been evicted from their homes or hospitals. Provides case management,
+health monitoring and education substance abuse counseling, bereavement support, vocational
+and educational training, support groups and leisure activities.
+lat:40.749960
+long:-73.991430
+
+BRC Project Rescue Drop-In Center
+315/317 Bowery
+New York, NY 10003
+(212) 533-5656 or (212) 533-2037
+Admissions and services 24 hours; 7 days a week
+Services:
+24-Hour Drop-In Center / Counseling / Psych. Evaluations and Treatment / Referrals / Substance
+Abuse Counseling / Medical Services / Housing Assistance / Dual Focus and MICA / Court
+Referrals / Non-Acute and Serious Medical Problems
+lat:40.725120
+long:-73.991980
+
+Catholic Charities of The Archdiocese of New York
+1011 First Avenue
+New York, NY 10022
+(212) 371-1000 ext. 2117 or 2187
+Provides child abuse and neglect prevention, foster care, group residences for teens, family
+reunification, adoption, family day care, juvenile justice services, a privately funded Maternity
+Services and Adoption Program and a Post Adoption Services Program. Also provides a shelter
+program for the homeless, and residential and respite services for individuals diagnosed with
+developmental disabilities
+lat:40.757400
+long:-73.963870
+
+Bond St. Drop-In Center
+39-41 Bond St.
+Brooklyn, NY
+(718) 935-0439
+The Bond Street Drop-In Center is a 24-hour program for homeless individuals. Our goal is to
+provide advocacy and empowerment in a safe environment for single homeless adults who are
+eighteen years of age and older, currently known as “homeless street people.” Our objective is to
+provide the chronically homeless, who generally have multiple problems and are resistant to
+traditional services, with case management services that will optimally lead to permanent or
+transitional housing. Bond Street delivers a range of comprehensive services.
+lat:40.688320
+long:-73.983830
+
+Volunteers of America - Crossroads
+395 Webster Avenue
+New Rochelle, NY 10801
+(914) 636-8680 or 634-8689
+Admissions: Mon-Fri. By appointment only.
+Screening: By Appointment Only.
+Services: 24 hours; 7 days a week
+Eligibility and Restrictions
+Men and Women 18 years and older. Eligibility: Alcohol and other drugs/ non acute medical
+problems/ moderate psych. problems / MICA upon review/ homeless.
+Services: Outpatient / average length 6-9 months / meals provided / referrals to social services /
+vocational services / AA meeting on-site once a week.
+Services for: Women / legal offenders / parolees
+Admission Procedures
+Agency referrals/ appointment required/ case history required/ medical evaluation/ psychiatric
+evaluation/ waiting list.
+lat:40.916560
+long:-73.795060
+
+
+
