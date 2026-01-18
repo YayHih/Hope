@@ -1,0 +1,57 @@
+version: '3.8'
+
+# IMPORTANT: Copy .env.docker.example to .env.docker and set your values
+# Then run: docker-compose --env-file .env.docker up
+
+services:
+  # PostgreSQL with PostGIS
+  postgres:
+    image: postgis/postgis:15-3.4
+    container_name: hope-postgres
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-hope_db}
+      POSTGRES_USER: ${POSTGRES_USER:-hope_user}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?POSTGRES_PASSWORD must be set}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-hope_user} -d ${POSTGRES_DB:-hope_db}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # FastAPI Backend
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: hope-backend
+    environment:
+      DATABASE_URL: postgresql+asyncpg://${POSTGRES_USER:-hope_user}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB:-hope_db}
+      SECRET_KEY: ${SECRET_KEY:?SECRET_KEY must be set}
+      ENCRYPTION_KEY: ${ENCRYPTION_KEY:?ENCRYPTION_KEY must be set}
+      ENVIRONMENT: ${ENVIRONMENT:-development}
+      ALLOWED_ORIGINS: ${ALLOWED_ORIGINS:-http://localhost:8081,exp://localhost:19000}
+    ports:
+      - "8000:8000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    volumes:
+      - ./backend:/app
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+
+  # Redis (optional, for caching)
+  redis:
+    image: redis:7-alpine
+    container_name: hope-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+
+volumes:
+  postgres_data:
+  redis_data:

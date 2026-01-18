@@ -1,0 +1,78 @@
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}
+
+/* Mobile UI Fix: Prevent popup from running off screen */
+.leaflet-popup-content {
+  max-height: 30vh !important; /* Limits height to 30% of screen */
+  overflow-y: auto !important; /* Enables internal scrolling */
+  width: 260px !important; /* Fixed width for mobile */
+
+  /* Apply scroll shadow directly using background-attachment method */
+  /* 1. Define the shadows */
+  background:
+    /* Top Shadow (Hidden) */
+    linear-gradient(white 30%, rgba(255,255,255,0)) center top,
+
+    /* Bottom Shadow (The Fade Out) */
+    linear-gradient(rgba(255,255,255,0), white 70%) center bottom,
+
+    /* Darker Radial Shadow for depth */
+    radial-gradient(farthest-side at 50% 100%, rgba(0,0,0,0.1), rgba(0,0,0,0)) center bottom;
+
+  /* 2. Sizing */
+  background-repeat: no-repeat;
+  background-size: 100% 40px, 100% 40px, 100% 14px;
+  background-attachment: local, local, scroll;
+
+  /* 3. Ensure background is white */
+  background-color: white;
+}
+
+/* Remove the old buggy pseudo-element */
+.leaflet-popup-content::after {
+  display: none !important;
+}
+
+/* Loading spinner animation */
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Network error banner slide-down animation */
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+}
+
+/* Retry button hover effect */
+button[style*="retryButton"]:hover:not(:disabled) {
+  opacity: 0.9;
+  transform: scale(1.05);
+}
+
+button[style*="retryButton"]:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}

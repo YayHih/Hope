@@ -1,0 +1,128 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+env/
+ENV/
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Environment variables - NEVER COMMIT THESE
+.env
+.env.local
+.env.*.local
+backend/.env
+scraper/.env
+mobile/.env
+frontend/.env
+frontend/.env.local
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Docker
+docker-compose.override.yml
+.env.docker
+
+# Database
+*.db
+*.sqlite
+*.sqlite3
+
+# Logs
+*.log
+logs/
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+
+# Node
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.expo/
+.expo-shared/
+dist/
+
+# Frontend build (can be regenerated)
+frontend/build/
+frontend/dist/
+
+# Mobile
+*.jks
+*.p8
+*.p12
+*.key
+*.mobileprovision
+*.orig.*
+web-build/
+mobile/android/app/build/
+mobile/ios/Pods/
+
+# Alembic
+alembic/versions/*.pyc
+
+# SSL Certificates - NEVER COMMIT THESE
+*.pem
+*.crt
+*.key
+*.csr
+
+# Temporary files
+*.tmp
+*.temp
+*.bak
+*.swp
+*~.nib
+*.DS_Store
+# --- Scraper Outputs & Raw Data (Keep the code, hide the data) ---
+# Excel & CSV Data (Prevents bloat and stale data)
+*.xlsx
+*.xls
+*.csv
+scraper/cfc_active.xlsx
+
+# PDFs (Downloaded reports)
+*.pdf
+
+# Packet Captures & Network Logs (CRITICAL: Prevents leaking session tokens/cookies)
+*.pcap
+*.pcapng
+*.har
+*.cap
+
+# Scraper Virtual Environments (If you created specific ones)
+scraper/venv/
+scraper/env/
+
+# Specific Security Folders (If you ever copy certs locally)
+certbot/
+ssl/
