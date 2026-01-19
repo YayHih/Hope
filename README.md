@@ -20,13 +20,6 @@
 | **Monthly Active (MAU)** | 200,000-300,000 capacity |
 | **Database Size** | 4.0 MB (5.3 MB with indexes) |
 
-**📈 Detailed Reports:**
-- [Performance Audit](PERFORMANCE_AUDIT.md) - Capacity estimates & scaling
-- [Deployment History](DEPLOYMENT_HISTORY.md) - Recent changes
-- [Cleanup Summary](CLEANUP_SUMMARY.md) - File organization
-- [Performance Summary](PERFORMANCE_SUMMARY.txt) - At-a-glance metrics
-
----
 
 
 **A free, privacy-focused directory of essential services for homeless individuals in New York City.**
