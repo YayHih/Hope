@@ -248,8 +248,8 @@ export function MapScreen() {
 
   if (loading) {
     return (
-      <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color={COLORS.primary} />
+      <View style={styles.loadingContainer} accessibilityRole="progressbar" accessibilityLabel="Loading nearby services">
+        <ActivityIndicator size="large" color={COLORS.primary} accessibilityLabel="Loading" />
         <Text style={styles.loadingText}>Finding nearby services...</Text>
       </View>
     );
@@ -272,7 +272,13 @@ export function MapScreen() {
               Please contact the Department of Homeless Services (DHS) or call 311 for placement.
             </Text>
 
-            <TouchableOpacity style={styles.dhsCallButton} onPress={handleDHSCall}>
+            <TouchableOpacity
+              style={styles.dhsCallButton}
+              onPress={handleDHSCall}
+              accessibilityRole="button"
+              accessibilityLabel="Call 311 for shelter placement"
+              accessibilityHint="Opens phone app to call 311"
+            >
               <Text style={styles.dhsCallButtonText}>📞 Call 311</Text>
             </TouchableOpacity>
 
@@ -291,6 +297,8 @@ export function MapScreen() {
           <TouchableOpacity
             style={styles.dhsBackButton}
             onPress={() => setShowDHSInfo(false)}
+            accessibilityRole="button"
+            accessibilityLabel="Back to map"
           >
             <Text style={styles.dhsBackButtonText}>← Back to Map</Text>
           </TouchableOpacity>
@@ -332,14 +340,17 @@ export function MapScreen() {
       </MapView>
 
       {/* DHS Toggle */}
-      <View style={styles.dhsToggle}>
+      <View style={styles.dhsToggle} accessibilityRole="none">
         <View style={styles.dhsToggleContent}>
-          <Text style={styles.dhsToggleLabel}>Show DHS / Official Resources</Text>
+          <Text style={styles.dhsToggleLabel} nativeID="dhs-toggle-label">Show DHS / Official Resources</Text>
           <Switch
             value={showDHSInfo}
             onValueChange={setShowDHSInfo}
             trackColor={{ false: COLORS.border, true: COLORS.primaryLight }}
             thumbColor={showDHSInfo ? COLORS.primary : COLORS.textLight}
+            accessibilityLabel="Show DHS official resources"
+            accessibilityHint="Toggle to show Department of Homeless Services contact information"
+            accessibilityRole="switch"
           />
         </View>
       </View>
@@ -348,6 +359,9 @@ export function MapScreen() {
       <TouchableOpacity
         style={styles.filtersButton}
         onPress={() => setShowFilters(!showFilters)}
+        accessibilityRole="button"
+        accessibilityLabel={showFilters ? 'Close filters' : 'Open filters'}
+        accessibilityState={{ expanded: showFilters }}
       >
         <Text style={styles.filtersButtonText}>
           {showFilters ? '✕ Close Filters' : '🔍 Filters'}
@@ -364,6 +378,10 @@ export function MapScreen() {
               <TouchableOpacity
                 style={[styles.filterChip, openNow && styles.filterChipActive]}
                 onPress={() => setOpenNow(!openNow)}
+                accessibilityRole="checkbox"
+                accessibilityState={{ checked: openNow }}
+                accessibilityLabel="Filter by open now"
+                accessibilityHint="Only show locations that are currently open"
               >
                 <Text
                   style={[
@@ -389,8 +407,12 @@ export function MapScreen() {
                         styles.filterChipActive,
                     ]}
                     onPress={() => toggleCategory(category.id)}
+                    accessibilityRole="checkbox"
+                    accessibilityState={{ checked: selectedCategories.includes(category.id) }}
+                    accessibilityLabel={`Filter by ${category.name}`}
+                    accessibilityHint={`Toggle ${category.name} services filter`}
                   >
-                    <Text style={styles.filterChipIcon}>{category.icon}</Text>
+                    <Text style={styles.filterChipIcon} accessibilityLabel="">{category.icon}</Text>
                     <Text
                       style={[
                         styles.filterChipText,
@@ -413,6 +435,9 @@ export function MapScreen() {
                   setSelectedCategories([]);
                   setOpenNow(false);
                 }}
+                accessibilityRole="button"
+                accessibilityLabel="Clear all filters"
+                accessibilityHint="Remove all active filters"
               >
                 <Text style={styles.clearButtonText}>Clear All Filters</Text>
               </TouchableOpacity>
@@ -422,7 +447,7 @@ export function MapScreen() {
       )}
 
       {/* Results Counter */}
-      <View style={styles.resultsCounter}>
+      <View style={styles.resultsCounter} accessibilityRole="text" accessibilityLiveRegion="polite">
         <Text style={styles.resultsText}>
           {nearbyServices.length} location{nearbyServices.length !== 1 ? 's' : ''} found
         </Text>
@@ -451,7 +476,12 @@ export function MapScreen() {
             <Text style={styles.serviceCardTitle} numberOfLines={2}>
               {selectedService.name}
             </Text>
-            <TouchableOpacity onPress={handleCloseCard} style={styles.closeButton}>
+            <TouchableOpacity
+              onPress={handleCloseCard}
+              style={styles.closeButton}
+              accessibilityRole="button"
+              accessibilityLabel="Close service details"
+            >
               <Text style={styles.closeButtonText}>✕</Text>
             </TouchableOpacity>
           </View>
@@ -496,6 +526,8 @@ export function MapScreen() {
               // Navigate to details screen when implemented
               Alert.alert('Details', `View full details for ${selectedService.name}`);
             }}
+            accessibilityRole="button"
+            accessibilityLabel={`View details for ${selectedService.name}`}
           >
             <Text style={styles.viewDetailsButtonText}>View Details →</Text>
           </TouchableOpacity>

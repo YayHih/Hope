@@ -1,6 +1,7 @@
 /**
  * App Navigation - Mobile-first with header, hamburger menu, and bottom tabs
  * Bottom tabs: Map (Home), Privacy, Terms, Report, Providers
+ * Includes full accessibility support and i18n
  */
 
 import React, { useState } from 'react';
@@ -9,6 +10,7 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { NavigationContainer } from '@react-navigation/native';
 import { COLORS, SPACING, TYPOGRAPHY } from '../constants/theme';
+import { useLanguage, Language } from '../i18n';
 
 // Import screens
 import { MapScreen } from '../screens/MapScreen';
@@ -22,25 +24,40 @@ import { ProviderPortalScreen } from '../screens/ProviderPortalScreen';
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
 
-// Language selector component (placeholder for future implementation)
+// Language order for cycling
+const LANGUAGE_ORDER: Language[] = ['EN', 'ES', 'ZH'];
+const LANGUAGE_LABELS: Record<Language, string> = {
+  EN: 'EN',
+  ES: 'ES',
+  ZH: '中文',
+};
+
+// Language selector component - single button that cycles through languages
 const LanguageSelector = () => {
-  const [language, setLanguage] = useState('EN');
+  const { language, setLanguage, t } = useLanguage();
+
+  const cycleLanguage = () => {
+    const currentIndex = LANGUAGE_ORDER.indexOf(language);
+    const nextIndex = (currentIndex + 1) % LANGUAGE_ORDER.length;
+    setLanguage(LANGUAGE_ORDER[nextIndex]);
+  };
+
+  const getNextLanguageLabel = () => {
+    const currentIndex = LANGUAGE_ORDER.indexOf(language);
+    const nextIndex = (currentIndex + 1) % LANGUAGE_ORDER.length;
+    return LANGUAGE_LABELS[LANGUAGE_ORDER[nextIndex]];
+  };
 
   return (
-    <View style={styles.languageContainer}>
-      <TouchableOpacity
-        style={[styles.langButton, language === 'EN' && styles.langButtonActive]}
-        onPress={() => setLanguage('EN')}
-      >
-        <Text style={[styles.langText, language === 'EN' && styles.langTextActive]}>EN</Text>
-      </TouchableOpacity>
-      <TouchableOpacity
-        style={[styles.langButton, language === 'ES' && styles.langButtonActive]}
-        onPress={() => setLanguage('ES')}
-      >
-        <Text style={[styles.langText, language === 'ES' && styles.langTextActive]}>ES</Text>
-      </TouchableOpacity>
-    </View>
+    <TouchableOpacity
+      style={[styles.langButton, styles.langButtonActive]}
+      onPress={cycleLanguage}
+      accessibilityRole="button"
+      accessibilityLabel={`${t.language}: ${LANGUAGE_LABELS[language]}`}
+      accessibilityHint={`Tap to switch to ${getNextLanguageLabel()}`}
+    >
+      <Text style={[styles.langText, styles.langTextActive]}>{LANGUAGE_LABELS[language]}</Text>
+    </TouchableOpacity>
   );
 };
 
@@ -51,12 +68,13 @@ interface HamburgerMenuProps {
 
 const HamburgerMenu = ({ navigation }: HamburgerMenuProps) => {
   const [menuVisible, setMenuVisible] = useState(false);
+  const { t } = useLanguage();
 
   const menuItems = [
-    { label: 'About', screen: 'About', icon: 'ℹ️' },
-    { label: 'How This Works', screen: 'HowItWorks', icon: '❓' },
-    { label: 'Report an Issue', screen: 'Report', icon: '🚩' },
-    { label: 'Provider Portal', screen: 'Providers', icon: '🏢' },
+    { label: t.about, screen: 'About', icon: 'ℹ️' },
+    { label: t.howItWorks, screen: 'HowItWorks', icon: '❓' },
+    { label: t.reportAnIssue, screen: 'Report', icon: '🚩' },
+    { label: t.providerPortal, screen: 'Providers', icon: '🏢' },
   ];
 
   return (
@@ -64,8 +82,11 @@ const HamburgerMenu = ({ navigation }: HamburgerMenuProps) => {
       <TouchableOpacity
         style={styles.hamburgerButton}
         onPress={() => setMenuVisible(true)}
+        accessibilityRole="button"
+        accessibilityLabel={t.openMenu}
+        accessibilityHint={t.opensNavigationMenu}
       >
-        <Text style={styles.hamburgerIcon}>☰</Text>
+        <Text style={styles.hamburgerIcon} accessibilityLabel="">☰</Text>
       </TouchableOpacity>
 
       <Modal
@@ -73,12 +94,18 @@ const HamburgerMenu = ({ navigation }: HamburgerMenuProps) => {
         animationType="slide"
         transparent={true}
         onRequestClose={() => setMenuVisible(false)}
+        accessibilityViewIsModal={true}
       >
         <View style={styles.modalOverlay}>
           <View style={styles.menuContainer}>
             <View style={styles.menuHeader}>
-              <Text style={styles.menuTitle}>Menu</Text>
-              <TouchableOpacity onPress={() => setMenuVisible(false)}>
+              <Text style={styles.menuTitle} accessibilityRole="header">{t.menu}</Text>
+              <TouchableOpacity
+                onPress={() => setMenuVisible(false)}
+                accessibilityRole="button"
+                accessibilityLabel={t.closeMenu}
+                style={styles.closeButtonTouchable}
+              >
                 <Text style={styles.closeButton}>✕</Text>
               </TouchableOpacity>
             </View>
@@ -92,8 +119,10 @@ const HamburgerMenu = ({ navigation }: HamburgerMenuProps) => {
                     setMenuVisible(false);
                     navigation.navigate(item.screen);
                   }}
+                  accessibilityRole="button"
+                  accessibilityLabel={item.label}
                 >
-                  <Text style={styles.menuItemIcon}>{item.icon}</Text>
+                  <Text style={styles.menuItemIcon} accessibilityLabel="">{item.icon}</Text>
                   <Text style={styles.menuItemText}>{item.label}</Text>
                 </TouchableOpacity>
               ))}
@@ -101,7 +130,7 @@ const HamburgerMenu = ({ navigation }: HamburgerMenuProps) => {
               <View style={styles.menuDivider} />
 
               <View style={styles.menuLanguageSection}>
-                <Text style={styles.menuSectionTitle}>Language</Text>
+                <Text style={styles.menuSectionTitle}>{t.language}</Text>
                 <LanguageSelector />
               </View>
             </ScrollView>
@@ -114,22 +143,26 @@ const HamburgerMenu = ({ navigation }: HamburgerMenuProps) => {
 
 // Custom header component
 const CustomHeader = ({ navigation }: { navigation: any }) => {
+  const { t } = useLanguage();
+
   return (
-    <View style={styles.header}>
+    <View style={styles.header} accessibilityRole="header">
       <HamburgerMenu navigation={navigation} />
-      <Text style={styles.headerTitle}>Hope for NYC</Text>
+      <Text style={styles.headerTitle} accessibilityRole="header" accessibilityLabel={t.appTitle}>{t.appTitle}</Text>
       <LanguageSelector />
     </View>
   );
 };
 
-// Tab icon component
+// Tab icon component with accessibility
 const TabIcon = ({ icon, focused }: { icon: string; focused: boolean }) => (
-  <Text style={{ fontSize: 24, opacity: focused ? 1 : 0.6 }}>{icon}</Text>
+  <Text style={{ fontSize: 24, opacity: focused ? 1 : 0.6 }} accessibilityLabel="">{icon}</Text>
 );
 
 // Main tab navigator
 function MainTabs() {
+  const { t } = useLanguage();
+
   return (
     <Tab.Navigator
       screenOptions={{
@@ -144,40 +177,45 @@ function MainTabs() {
         name="MapTab"
         component={MapScreen}
         options={{
-          title: 'Map',
+          title: t.map,
           tabBarIcon: ({ focused }) => <TabIcon icon="🗺️" focused={focused} />,
+          tabBarAccessibilityLabel: `${t.mapTab} - ${t.findNearbyServices}`,
         }}
       />
       <Tab.Screen
         name="Privacy"
         component={PrivacyPolicyScreen}
         options={{
-          title: 'Privacy',
+          title: t.privacy,
           tabBarIcon: ({ focused }) => <TabIcon icon="🔒" focused={focused} />,
+          tabBarAccessibilityLabel: t.privacyPolicyTab,
         }}
       />
       <Tab.Screen
         name="Terms"
         component={TermsOfUseScreen}
         options={{
-          title: 'Terms',
+          title: t.terms,
           tabBarIcon: ({ focused }) => <TabIcon icon="📄" focused={focused} />,
+          tabBarAccessibilityLabel: t.termsOfUseTab,
         }}
       />
       <Tab.Screen
         name="Report"
         component={ReportIssueScreen}
         options={{
-          title: 'Report',
+          title: t.report,
           tabBarIcon: ({ focused }) => <TabIcon icon="🚩" focused={focused} />,
+          tabBarAccessibilityLabel: t.reportAnIssueTab,
         }}
       />
       <Tab.Screen
         name="Providers"
         component={ProviderPortalScreen}
         options={{
-          title: 'Providers',
+          title: t.providers,
           tabBarIcon: ({ focused }) => <TabIcon icon="🏢" focused={focused} />,
+          tabBarAccessibilityLabel: t.providerPortalTab,
         }}
       />
     </Tab.Navigator>
@@ -186,6 +224,8 @@ function MainTabs() {
 
 // Root navigator with stack for modal screens
 export function AppNavigator() {
+  const { t } = useLanguage();
+
   return (
     <NavigationContainer>
       <Stack.Navigator screenOptions={{ headerShown: false }}>
@@ -195,7 +235,7 @@ export function AppNavigator() {
           component={AboutScreen}
           options={{
             headerShown: true,
-            title: 'About',
+            title: t.about,
             headerStyle: { backgroundColor: COLORS.primary },
             headerTintColor: COLORS.textInverse,
           }}
@@ -205,7 +245,7 @@ export function AppNavigator() {
           component={HowItWorksScreen}
           options={{
             headerShown: true,
-            title: 'How This Works',
+            title: t.howItWorks,
             headerStyle: { backgroundColor: COLORS.primary },
             headerTintColor: COLORS.textInverse,
           }}
@@ -244,6 +284,10 @@ const styles = StyleSheet.create({
   },
   hamburgerButton: {
     padding: SPACING.sm,
+    minWidth: 44,
+    minHeight: 44,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   hamburgerIcon: {
     fontSize: 24,
@@ -260,6 +304,10 @@ const styles = StyleSheet.create({
     backgroundColor: 'transparent',
     borderWidth: 1,
     borderColor: COLORS.textInverse,
+    minWidth: 44,
+    minHeight: 44,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   langButtonActive: {
     backgroundColor: COLORS.textInverse,
@@ -320,10 +368,15 @@ const styles = StyleSheet.create({
     ...TYPOGRAPHY.h2,
     color: COLORS.text,
   },
+  closeButtonTouchable: {
+    minWidth: 44,
+    minHeight: 44,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
   closeButton: {
     fontSize: 28,
     color: COLORS.textSecondary,
-    padding: SPACING.sm,
   },
   menuItems: {
     paddingVertical: SPACING.md,
@@ -333,6 +386,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: SPACING.lg,
     paddingVertical: SPACING.md,
+    minHeight: 48,
   },
   menuItemIcon: {
     fontSize: 24,

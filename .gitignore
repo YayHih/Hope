@@ -33,6 +33,9 @@ mobile/.env
 frontend/.env
 frontend/.env.local
 
+# Claude Code local settings (may contain credentials)
+.claude/
+
 # IDEs
 .vscode/
 .idea/

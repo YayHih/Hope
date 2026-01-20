@@ -17,7 +17,11 @@
     ],
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "org.hopeplatform.app"
+      "bundleIdentifier": "org.hopeplatform.app",
+      "infoPlist": {
+        "NSLocationWhenInUseUsageDescription": "Hope Platform uses your location to find nearby homeless services and resources.",
+        "CFBundleAllowMixedLocalizations": true
+      }
     },
     "android": {
       "adaptiveIcon": {
@@ -41,7 +45,25 @@
         {
           "locationAlwaysAndWhenInUsePermission": "Allow Hope Platform to use your location to find nearby services."
         }
+      ],
+      "expo-secure-store",
+      "@sentry/react-native/expo"
+    ],
+    "hooks": {
+      "postPublish": [
+        {
+          "file": "@sentry/react-native/expo",
+          "config": {
+            "organization": "hope-platform",
+            "project": "hope-mobile"
+          }
+        }
       ]
-    ]
+    },
+    "extra": {
+      "eas": {
+        "projectId": ""
+      }
+    }
   }
 }
