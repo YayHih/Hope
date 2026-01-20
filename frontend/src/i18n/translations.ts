@@ -13,6 +13,7 @@ export const translations = {
     loading: 'Loading...',
     dhsOfficial: 'Shelter & Housing',
     openNow: 'Open Now',
+    openToday: 'Open Today',
 
     // Service Types
     food: 'Food',
@@ -219,6 +220,7 @@ export const translations = {
     loading: 'Cargando...',
     dhsOfficial: 'Refugio y Vivienda',
     openNow: 'Abierto Ahora',
+    openToday: 'Abierto Hoy',
 
     // Service Types
     food: 'Comida',

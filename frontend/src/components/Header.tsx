@@ -7,7 +7,7 @@ import { useLanguage } from '../i18n/LanguageContext';
 const Header: React.FC = () => {
   const [menuOpen, setMenuOpen] = useState(false);
   const { language, setLanguage } = useLanguage();
-  const { colors } = useTheme();
+  const { colors, isDark, toggleTheme } = useTheme();
 
   const toggleMenu = () => setMenuOpen(!menuOpen);
   const closeMenu = () => setMenuOpen(false);
@@ -41,6 +41,25 @@ const Header: React.FC = () => {
       fontSize: TYPOGRAPHY.fontSize.xl,
       fontWeight: TYPOGRAPHY.fontWeight.bold,
       margin: 0,
+    },
+    rightControls: {
+      display: 'flex',
+      alignItems: 'center',
+      gap: SPACING.sm,
+    },
+    themeToggle: {
+      fontSize: '20px',
+      color: colors.textInverse,
+      backgroundColor: 'rgba(255, 255, 255, 0.2)',
+      border: 'none',
+      borderRadius: '4px',
+      padding: SPACING.sm,
+      cursor: 'pointer',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      width: '36px',
+      height: '36px',
     },
     languageButton: {
       fontSize: TYPOGRAPHY.fontSize.base,
@@ -133,9 +152,19 @@ const Header: React.FC = () => {
 
         <h1 style={styles.brandName}>Hope for NYC</h1>
 
-        <button onClick={toggleLanguage} style={styles.languageButton}>
-          {language.toUpperCase()}
-        </button>
+        <div style={styles.rightControls}>
+          <button
+            onClick={toggleTheme}
+            style={styles.themeToggle}
+            title={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
+            aria-label={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
+          >
+            {isDark ? '☀️' : '🌙'}
+          </button>
+          <button onClick={toggleLanguage} style={styles.languageButton}>
+            {language.toUpperCase()}
+          </button>
+        </div>
       </header>
 
       {/* Hamburger Menu Overlay */}
@@ -157,6 +186,9 @@ const Header: React.FC = () => {
               <Link to="/how-it-works" style={styles.menuItem} onClick={closeMenu}>
                 How This Works
               </Link>
+              <button onClick={() => { toggleTheme(); }} style={styles.menuItemButton}>
+                Theme: {isDark ? 'Dark' : 'Light'}
+              </button>
               <button onClick={() => { toggleLanguage(); closeMenu(); }} style={styles.menuItemButton}>
                 Language: {language.toUpperCase()}
               </button>

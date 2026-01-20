@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 
 export type ThemeMode = 'light' | 'dark';
 
@@ -100,27 +100,51 @@ interface ThemeContextType {
   mode: ThemeMode;
   colors: ThemeColors;
   isDark: boolean;
+  toggleTheme: () => void;
 }
+
+const THEME_STORAGE_KEY = 'hope-theme-preference';
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
 export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  // Detect system preference
-  const getSystemTheme = (): ThemeMode => {
-    if (typeof window !== 'undefined' && window.matchMedia) {
-      return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+  // Get initial theme: check localStorage first, then system preference
+  const getInitialTheme = (): ThemeMode => {
+    if (typeof window !== 'undefined') {
+      // Check localStorage for user preference
+      const stored = localStorage.getItem(THEME_STORAGE_KEY);
+      if (stored === 'light' || stored === 'dark') {
+        return stored;
+      }
+      // Fall back to system preference
+      if (window.matchMedia) {
+        return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+      }
     }
     return 'light';
   };
 
-  const [mode, setMode] = useState<ThemeMode>(getSystemTheme);
+  const [mode, setMode] = useState<ThemeMode>(getInitialTheme);
 
-  // Listen for system theme changes
+  // Toggle theme and persist to localStorage
+  const toggleTheme = useCallback(() => {
+    setMode(prevMode => {
+      const newMode = prevMode === 'dark' ? 'light' : 'dark';
+      localStorage.setItem(THEME_STORAGE_KEY, newMode);
+      return newMode;
+    });
+  }, []);
+
+  // Listen for system theme changes (only if user hasn't set a preference)
   useEffect(() => {
     const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
 
     const handleChange = (e: MediaQueryListEvent) => {
-      setMode(e.matches ? 'dark' : 'light');
+      // Only auto-switch if user hasn't set a manual preference
+      const stored = localStorage.getItem(THEME_STORAGE_KEY);
+      if (!stored) {
+        setMode(e.matches ? 'dark' : 'light');
+      }
     };
 
     // Modern browsers
@@ -138,13 +162,19 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     document.documentElement.setAttribute('data-theme', mode);
     document.body.style.backgroundColor = mode === 'dark' ? darkColors.background : lightColors.background;
     document.body.style.color = mode === 'dark' ? darkColors.text : lightColors.text;
+    // Add/remove dark-mode class for CSS targeting (e.g., Leaflet popups)
+    if (mode === 'dark') {
+      document.body.classList.add('dark-mode');
+    } else {
+      document.body.classList.remove('dark-mode');
+    }
   }, [mode]);
 
   const colors = mode === 'dark' ? darkColors : lightColors;
   const isDark = mode === 'dark';
 
   return (
-    <ThemeContext.Provider value={{ mode, colors, isDark }}>
+    <ThemeContext.Provider value={{ mode, colors, isDark, toggleTheme }}>
       {children}
     </ThemeContext.Provider>
   );

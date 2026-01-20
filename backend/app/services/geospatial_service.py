@@ -81,6 +81,39 @@ class GeospatialService:
 
         return False
 
+    def _calculate_is_open_today(self, operating_hours_list) -> bool:
+        """
+        Calculate if location has any open hours today from eager-loaded operating hours.
+        This is a synchronous helper that doesn't make database queries.
+        """
+        if not operating_hours_list:
+            return False
+
+        now = datetime.now()
+        current_day = now.weekday()  # 0 = Monday, 6 = Sunday
+        # Convert to our format (0 = Sunday)
+        current_day = (current_day + 1) % 7
+
+        # Filter hours for today
+        today_hours = [h for h in operating_hours_list if h.day_of_week == current_day]
+
+        if not today_hours:
+            return False
+
+        # Check if any of the operating hours indicate the location is open today
+        for hours in today_hours:
+            if hours.is_closed:
+                continue
+
+            if hours.is_24_hours:
+                return True
+
+            # If there are any open/close times for today, it's open today
+            if hours.open_time and hours.close_time:
+                return True
+
+        return False
+
     async def get_service_types(self, active_only: bool = True) -> List[ServiceTypeResponse]:
         """Get all service types."""
         query = select(ServiceType)
@@ -248,6 +281,7 @@ class GeospatialService:
         service_types: Optional[List[str]] = None,
         exclude_service_types: Optional[List[str]] = None,
         open_now: bool = False,
+        open_today: bool = False,
         limit: int = 75
     ) -> List[ServiceLocationResponse]:
         """
@@ -267,6 +301,7 @@ class GeospatialService:
             service_types: Filter by service type slugs (optional)
             exclude_service_types: Exclude specific service type slugs (optional)
             open_now: Filter by currently open locations (optional)
+            open_today: Filter by locations open any time today (optional)
             limit: Maximum number of results (default 75 for performance)
 
         Returns:
@@ -349,6 +384,10 @@ class GeospatialService:
 
             # If open_now filter is enabled, skip closed locations
             if open_now and not is_open:
+                continue
+
+            # If open_today filter is enabled, skip locations not open today
+            if open_today and not self._calculate_is_open_today(location.operating_hours):
                 continue
 
             # Calculate distance if center provided

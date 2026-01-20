@@ -128,6 +128,7 @@ async def get_services_in_bounds(
     service_types: Optional[List[str]] = Query(None, description="Filter by service type slugs"),
     exclude_service_types: Optional[List[str]] = Query(None, description="Exclude specific service type slugs"),
     open_now: bool = Query(False, description="Only show currently open locations"),
+    open_today: bool = Query(False, description="Only show locations open any time today"),
     limit: int = Query(75, ge=1, le=100, description="Maximum number of results (default 75 for performance)"),
     db: AsyncSession = Depends(get_db)
 ):
@@ -146,6 +147,7 @@ async def get_services_in_bounds(
     - center_lat, center_lng: Optional center for distance-based sorting
     - service_types: Optional list of service type slugs to filter
     - open_now: Only return locations currently open
+    - open_today: Only return locations open any time today
     - limit: Maximum results (default 75, max 100 for mobile performance)
 
     Returns:
@@ -172,6 +174,7 @@ async def get_services_in_bounds(
         service_types=service_types,
         exclude_service_types=exclude_service_types,
         open_now=open_now,
+        open_today=open_today,
         limit=limit
     )
 

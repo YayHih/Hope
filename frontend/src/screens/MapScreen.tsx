@@ -590,6 +590,7 @@ const MapScreen: React.FC = () => {
   const [userLocation, setUserLocation] = useState<[number, number]>([40.7580, -73.9855]);
   const [showDHSInfo, setShowDHSInfo] = useState<boolean>(false);
   const [openNow, setOpenNow] = useState<boolean>(false);
+  const [openToday, setOpenToday] = useState<boolean>(false);
   const [mapBounds, setMapBounds] = useState<any>(null);
   const [mapCenter, setMapCenter] = useState<[number, number] | null>(null);
   const [locationRequested, setLocationRequested] = useState<boolean>(false);
@@ -607,7 +608,7 @@ const MapScreen: React.FC = () => {
   const loadedLocationIds = React.useRef<Set<string>>(new Set());
   const lastFetchBounds = React.useRef<{minLat: number, maxLat: number, minLng: number, maxLng: number} | null>(null);
   const lastFetchTime = React.useRef<number>(0);
-  const lastFetchFilters = React.useRef<{categories: string[], openNow: boolean} | null>(null);
+  const lastFetchFilters = React.useRef<{categories: string[], openNow: boolean, openToday: boolean} | null>(null);
 
   useEffect(() => {
     fetchServiceTypes();
@@ -651,7 +652,7 @@ const MapScreen: React.FC = () => {
     }
     // When categories change, don't clear anything - just let the fetch happen
     // The fetch function will check if filters changed and handle accordingly
-  }, [selectedCategories, openNow]);
+  }, [selectedCategories, openNow, openToday]);
 
   // Debounced effect for fetching services
   // SECURITY FIX (VULN-005): Added abort controller cleanup to prevent race conditions
@@ -671,7 +672,7 @@ const MapScreen: React.FC = () => {
       };
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedCategories, openNow, showDHSInfo, mapBounds]);
+  }, [selectedCategories, openNow, openToday, showDHSInfo, mapBounds]);
 
   const fetchServiceTypes = async () => {
     try {
@@ -715,6 +716,7 @@ const MapScreen: React.FC = () => {
     // Check if filters have changed
     const filtersChanged = lastFetchFilters.current === null ||
       lastFetchFilters.current.openNow !== openNow ||
+      lastFetchFilters.current.openToday !== openToday ||
       JSON.stringify(lastFetchFilters.current.categories.sort()) !== JSON.stringify(selectedCategories.sort());
 
     // Check if viewport has significantly changed to avoid redundant fetches
@@ -783,6 +785,11 @@ const MapScreen: React.FC = () => {
         url += `&open_now=true`;
       }
 
+      // Add open_today parameter if enabled
+      if (openToday) {
+        url += `&open_today=true`;
+      }
+
       debugLog('Fetching services from bbox:', bufferedBounds);
       const response = await axios.get(url, { signal: abortController.signal });
       debugLog('Received services:', response.data.length);
@@ -829,7 +836,8 @@ const MapScreen: React.FC = () => {
       lastFetchBounds.current = bufferedBounds;
       lastFetchFilters.current = {
         categories: [...selectedCategories],
-        openNow: openNow
+        openNow: openNow,
+        openToday: openToday
       };
     } catch (error) {
       if (axios.isCancel(error)) {
@@ -1527,6 +1535,16 @@ const MapScreen: React.FC = () => {
               }}
             >
               {openNow ? '✓ ' : ''}{t('openNow')}
+            </button>
+
+            <button
+              onClick={() => setOpenToday(!openToday)}
+              style={{
+                ...styles.filterButton,
+                ...(openToday ? styles.filterButtonActive : {}),
+              }}
+            >
+              {openToday ? '✓ ' : ''}{t('openToday')}
             </button>
 
             <button
