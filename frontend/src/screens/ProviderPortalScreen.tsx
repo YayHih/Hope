@@ -1,7 +1,90 @@
 import React from 'react';
-import { COLORS, SPACING, TYPOGRAPHY } from '../theme';
+import { SPACING, TYPOGRAPHY } from '../theme';
+import { useTheme } from '../theme/ThemeContext';
 
 const ProviderPortalScreen: React.FC = () => {
+  const { colors } = useTheme();
+
+  const styles: { [key: string]: React.CSSProperties } = {
+    container: {
+      padding: SPACING.md,
+      maxWidth: '800px',
+      margin: '0 auto',
+      backgroundColor: colors.background,
+    },
+    content: {
+      padding: SPACING.lg,
+    },
+    header: {
+      fontSize: TYPOGRAPHY.fontSize['3xl'],
+      fontWeight: TYPOGRAPHY.fontWeight.bold,
+      color: colors.primary,
+      marginBottom: SPACING.xl,
+      textAlign: 'center',
+    },
+    infoCard: {
+      backgroundColor: colors.surface,
+      padding: SPACING.xl,
+      borderRadius: '12px',
+      border: `2px solid ${colors.primary}`,
+    },
+    iconContainer: {
+      textAlign: 'center',
+      marginBottom: SPACING.lg,
+    },
+    icon: {
+      fontSize: '64px',
+    },
+    subheader: {
+      fontSize: TYPOGRAPHY.fontSize.xl,
+      fontWeight: TYPOGRAPHY.fontWeight.semibold,
+      color: colors.text,
+      marginBottom: SPACING.sm,
+    },
+    section: {
+      marginBottom: SPACING.lg,
+    },
+    text: {
+      fontSize: TYPOGRAPHY.fontSize.base,
+      lineHeight: TYPOGRAPHY.lineHeight.relaxed,
+      color: colors.text,
+      marginBottom: SPACING.sm,
+    },
+    list: {
+      margin: 0,
+      paddingLeft: SPACING.lg,
+    },
+    listItem: {
+      fontSize: TYPOGRAPHY.fontSize.base,
+      lineHeight: TYPOGRAPHY.lineHeight.relaxed,
+      color: colors.text,
+      marginBottom: SPACING.sm,
+    },
+    emailButton: {
+      display: 'inline-block',
+      padding: `${SPACING.md} ${SPACING.xl}`,
+      fontSize: TYPOGRAPHY.fontSize.base,
+      fontWeight: TYPOGRAPHY.fontWeight.semibold,
+      color: colors.textInverse,
+      backgroundColor: colors.primary,
+      textDecoration: 'none',
+      borderRadius: '8px',
+      marginTop: SPACING.md,
+      transition: 'background-color 0.2s',
+    },
+    note: {
+      marginTop: SPACING.xl,
+      padding: SPACING.md,
+      backgroundColor: colors.backgroundSecondary,
+      borderRadius: '8px',
+    },
+    noteText: {
+      fontSize: TYPOGRAPHY.fontSize.sm,
+      color: colors.textSecondary,
+      margin: 0,
+    },
+  };
+
   return (
     <div style={styles.container}>
       <div style={styles.content}>
@@ -38,7 +121,7 @@ const ProviderPortalScreen: React.FC = () => {
               href="mailto:providers@hopefornyc.com"
               style={styles.emailButton}
             >
-              📧 providers@hopefornyc.com
+              providers@hopefornyc.com
             </a>
           </div>
         </div>
@@ -52,86 +135,6 @@ const ProviderPortalScreen: React.FC = () => {
       </div>
     </div>
   );
-};
-
-const styles: { [key: string]: React.CSSProperties } = {
-  container: {
-    padding: SPACING.md,
-    maxWidth: '800px',
-    margin: '0 auto',
-    backgroundColor: COLORS.background,
-  },
-  content: {
-    padding: SPACING.lg,
-  },
-  header: {
-    fontSize: TYPOGRAPHY.fontSize['3xl'],
-    fontWeight: TYPOGRAPHY.fontWeight.bold,
-    color: COLORS.primary,
-    marginBottom: SPACING.xl,
-    textAlign: 'center',
-  },
-  infoCard: {
-    backgroundColor: COLORS.backgroundGray,
-    padding: SPACING.xl,
-    borderRadius: '12px',
-    border: `2px solid ${COLORS.primary}`,
-  },
-  iconContainer: {
-    textAlign: 'center',
-    marginBottom: SPACING.lg,
-  },
-  icon: {
-    fontSize: '64px',
-  },
-  subheader: {
-    fontSize: TYPOGRAPHY.fontSize.xl,
-    fontWeight: TYPOGRAPHY.fontWeight.semibold,
-    color: COLORS.text,
-    marginBottom: SPACING.sm,
-  },
-  section: {
-    marginBottom: SPACING.lg,
-  },
-  text: {
-    fontSize: TYPOGRAPHY.fontSize.base,
-    lineHeight: TYPOGRAPHY.lineHeight.relaxed,
-    color: COLORS.text,
-    marginBottom: SPACING.sm,
-  },
-  list: {
-    margin: 0,
-    paddingLeft: SPACING.lg,
-  },
-  listItem: {
-    fontSize: TYPOGRAPHY.fontSize.base,
-    lineHeight: TYPOGRAPHY.lineHeight.relaxed,
-    color: COLORS.text,
-    marginBottom: SPACING.sm,
-  },
-  emailButton: {
-    display: 'inline-block',
-    padding: `${SPACING.md} ${SPACING.xl}`,
-    fontSize: TYPOGRAPHY.fontSize.base,
-    fontWeight: TYPOGRAPHY.fontWeight.semibold,
-    color: COLORS.textInverse,
-    backgroundColor: COLORS.primary,
-    textDecoration: 'none',
-    borderRadius: '8px',
-    marginTop: SPACING.md,
-    transition: 'background-color 0.2s',
-  },
-  note: {
-    marginTop: SPACING.xl,
-    padding: SPACING.md,
-    backgroundColor: COLORS.backgroundGray,
-    borderRadius: '8px',
-  },
-  noteText: {
-    fontSize: TYPOGRAPHY.fontSize.sm,
-    color: COLORS.textSecondary,
-    margin: 0,
-  },
 };
 
 export default ProviderPortalScreen;

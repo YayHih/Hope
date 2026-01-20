@@ -3,7 +3,8 @@ import { MapContainer, TileLayer, Marker, Popup, Circle, useMapEvents, useMap } 
 import MarkerClusterGroup from 'react-leaflet-cluster';
 import axios from 'axios';
 import L from 'leaflet';
-import { COLORS, SPACING, TYPOGRAPHY } from '../theme';
+import { SPACING, TYPOGRAPHY } from '../theme';
+import { useTheme } from '../theme/ThemeContext';
 import { useLanguage } from '../i18n/LanguageContext';
 import icon from 'leaflet/dist/images/marker-icon.png';
 import iconShadow from 'leaflet/dist/images/marker-shadow.png';
@@ -322,7 +323,11 @@ const formatOperatingHours = (hours: OperatingHours[] | undefined, t: (key: any)
 };
 
 // Weekly hours dropdown component
-const WeeklyHoursDropdown: React.FC<{ hours: OperatingHours[]; t: (key: any) => string }> = ({ hours, t }) => {
+const WeeklyHoursDropdown: React.FC<{
+  hours: OperatingHours[];
+  t: (key: any) => string;
+  isDark: boolean;
+}> = ({ hours, t, isDark }) => {
   const [isOpen, setIsOpen] = useState(false);
 
   const dayKeys = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'] as const;
@@ -357,13 +362,19 @@ const WeeklyHoursDropdown: React.FC<{ hours: OperatingHours[]; t: (key: any) => 
 
   const today = getTodayDayOfWeek();
 
+  // Theme-aware colors
+  const bgColor = isDark ? '#374151' : '#f8f9fa';
+  const borderColor = isDark ? '#4B5563' : '#dee2e6';
+  const textColor = isDark ? '#F3F4F6' : '#333';
+  const todayBgColor = isDark ? '#92400E' : '#fff3cd';
+
   return (
     <div style={{ marginTop: '8px' }}>
       <button
         onClick={() => setIsOpen(!isOpen)}
         style={{
-          backgroundColor: '#f8f9fa',
-          border: '1px solid #dee2e6',
+          backgroundColor: bgColor,
+          border: `1px solid ${borderColor}`,
           borderRadius: '4px',
           padding: '4px 8px',
           fontSize: '0.8em',
@@ -372,7 +383,8 @@ const WeeklyHoursDropdown: React.FC<{ hours: OperatingHours[]; t: (key: any) => 
           textAlign: 'left',
           display: 'flex',
           justifyContent: 'space-between',
-          alignItems: 'center'
+          alignItems: 'center',
+          color: textColor,
         }}
       >
         <span>📅 {t('viewAllHours')}</span>
@@ -383,18 +395,19 @@ const WeeklyHoursDropdown: React.FC<{ hours: OperatingHours[]; t: (key: any) => 
         <div style={{
           marginTop: '4px',
           padding: '6px',
-          backgroundColor: '#f8f9fa',
+          backgroundColor: bgColor,
           borderRadius: '4px',
-          fontSize: '0.8em'
+          fontSize: '0.8em',
+          color: textColor,
         }}>
           {hoursGroupedByDay.map((item, idx) => (
             <div
               key={idx}
               style={{
                 padding: '4px 0',
-                borderBottom: idx < hoursGroupedByDay.length - 1 ? '1px solid #dee2e6' : 'none',
+                borderBottom: idx < hoursGroupedByDay.length - 1 ? `1px solid ${borderColor}` : 'none',
                 fontWeight: idx === today ? 'bold' : 'normal',
-                backgroundColor: idx === today ? '#fff3cd' : 'transparent',
+                backgroundColor: idx === today ? todayBgColor : 'transparent',
                 paddingLeft: idx === today ? '4px' : '0',
                 borderRadius: '2px'
               }}
@@ -568,6 +581,7 @@ const getServiceTypeName = (name: string, t: any): string => {
 
 const MapScreen: React.FC = () => {
   const { t } = useLanguage();
+  const { colors, isDark } = useTheme();
   const [services, setServices] = useState<ServiceLocation[]>([]);
   const [serviceTypes, setServiceTypes] = useState<ServiceType[]>([]);
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
@@ -1134,7 +1148,7 @@ const MapScreen: React.FC = () => {
                 </p>
                 {/* Weekly Hours Dropdown - Show full week schedule */}
                 {service.operating_hours && service.operating_hours.length > 0 && (
-                  <WeeklyHoursDropdown hours={service.operating_hours} t={t} />
+                  <WeeklyHoursDropdown hours={service.operating_hours} t={t} isDark={isDark} />
                 )}
               </div>
             ) : (
@@ -1268,7 +1282,10 @@ const MapScreen: React.FC = () => {
       </MarkerWithClick>
       );
     });
-  }, [visibleServices, selectedCategories, serviceTypes, t, isProgrammaticMoveRef]);
+  }, [visibleServices, selectedCategories, serviceTypes, t, isProgrammaticMoveRef, isDark]);
+
+  // Generate theme-aware styles
+  const styles = getStyles(colors, isDark);
 
   return (
     <div style={styles.container}>
@@ -1475,14 +1492,14 @@ const MapScreen: React.FC = () => {
             position: 'absolute',
             top: '80px',
             right: '20px',
-            backgroundColor: 'rgba(255, 255, 255, 0.95)',
+            backgroundColor: isDark ? 'rgba(31, 41, 55, 0.95)' : 'rgba(255, 255, 255, 0.95)',
             padding: '10px 16px',
             borderRadius: '8px',
-            boxShadow: '0 2px 8px rgba(0,0,0,0.15)',
+            boxShadow: isDark ? '0 2px 8px rgba(0,0,0,0.4)' : '0 2px 8px rgba(0,0,0,0.15)',
             zIndex: 1000,
             fontSize: '14px',
             fontWeight: 500,
-            color: COLORS.text,
+            color: colors.text,
             display: 'flex',
             alignItems: 'center',
             gap: '8px',
@@ -1591,9 +1608,9 @@ const MapScreen: React.FC = () => {
                   padding: `${SPACING.xs} ${SPACING.sm}`,
                   fontSize: TYPOGRAPHY.fontSize.xs,
                   fontWeight: TYPOGRAPHY.fontWeight.medium,
-                  color: foodSubFilters.hotMeals ? '#fff' : COLORS.text,
-                  backgroundColor: foodSubFilters.hotMeals ? '#38A169' : COLORS.background,
-                  border: `2px solid ${foodSubFilters.hotMeals ? '#38A169' : COLORS.border}`,
+                  color: foodSubFilters.hotMeals ? '#fff' : colors.text,
+                  backgroundColor: foodSubFilters.hotMeals ? '#38A169' : colors.surface,
+                  border: `2px solid ${foodSubFilters.hotMeals ? '#38A169' : colors.border}`,
                   borderRadius: '6px',
                   cursor: 'pointer',
                   whiteSpace: 'nowrap',
@@ -1607,9 +1624,9 @@ const MapScreen: React.FC = () => {
                   padding: `${SPACING.xs} ${SPACING.sm}`,
                   fontSize: TYPOGRAPHY.fontSize.xs,
                   fontWeight: TYPOGRAPHY.fontWeight.medium,
-                  color: foodSubFilters.groceries ? '#fff' : COLORS.text,
-                  backgroundColor: foodSubFilters.groceries ? '#38A169' : COLORS.background,
-                  border: `2px solid ${foodSubFilters.groceries ? '#38A169' : COLORS.border}`,
+                  color: foodSubFilters.groceries ? '#fff' : colors.text,
+                  backgroundColor: foodSubFilters.groceries ? '#38A169' : colors.surface,
+                  border: `2px solid ${foodSubFilters.groceries ? '#38A169' : colors.border}`,
                   borderRadius: '6px',
                   cursor: 'pointer',
                   whiteSpace: 'nowrap',
@@ -1629,9 +1646,9 @@ const MapScreen: React.FC = () => {
                   padding: `${SPACING.xs} ${SPACING.sm}`,
                   fontSize: TYPOGRAPHY.fontSize.xs,
                   fontWeight: TYPOGRAPHY.fontWeight.medium,
-                  color: crisisSubFilters.cpep ? '#fff' : COLORS.text,
-                  backgroundColor: crisisSubFilters.cpep ? '#E91E63' : COLORS.background,
-                  border: `2px solid ${crisisSubFilters.cpep ? '#E91E63' : COLORS.border}`,
+                  color: crisisSubFilters.cpep ? '#fff' : colors.text,
+                  backgroundColor: crisisSubFilters.cpep ? '#E91E63' : colors.surface,
+                  border: `2px solid ${crisisSubFilters.cpep ? '#E91E63' : colors.border}`,
                   borderRadius: '6px',
                   cursor: 'pointer',
                   whiteSpace: 'nowrap',
@@ -1645,9 +1662,9 @@ const MapScreen: React.FC = () => {
                   padding: `${SPACING.xs} ${SPACING.sm}`,
                   fontSize: TYPOGRAPHY.fontSize.xs,
                   fontWeight: TYPOGRAPHY.fontWeight.medium,
-                  color: crisisSubFilters.other ? '#fff' : COLORS.text,
-                  backgroundColor: crisisSubFilters.other ? '#9C27B0' : COLORS.background,
-                  border: `2px solid ${crisisSubFilters.other ? '#9C27B0' : COLORS.border}`,
+                  color: crisisSubFilters.other ? '#fff' : colors.text,
+                  backgroundColor: crisisSubFilters.other ? '#9C27B0' : colors.surface,
+                  border: `2px solid ${crisisSubFilters.other ? '#9C27B0' : colors.border}`,
                   borderRadius: '6px',
                   cursor: 'pointer',
                   whiteSpace: 'nowrap',
@@ -1668,11 +1685,14 @@ const MapScreen: React.FC = () => {
           zoomControl={true}
         >
           <TileLayer
-  // This attribution is legally required by Carto
-  attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
-  // This is the "Voyager" style (Streets + Navigation)
-  url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png"
-/>
+            // This attribution is legally required by Carto
+            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
+            // Switch between Voyager (light) and Dark Matter (dark) based on theme
+            url={isDark
+              ? "https://{s}.basemaps.cartocdn.com/rastertiles/dark_all/{z}/{x}/{y}{r}.png"
+              : "https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png"
+            }
+          />
           <MapEventHandler onRegionChange={handleRegionChange} isProgrammaticMoveRef={isProgrammaticMoveRef} />
           <MapCenterController center={mapCenter} />
 
@@ -1717,7 +1737,8 @@ const MapScreen: React.FC = () => {
   );
 };
 
-const styles: { [key: string]: React.CSSProperties } = {
+// Dynamic styles function for theme support
+const getStyles = (colors: any, isDark: boolean): { [key: string]: React.CSSProperties } => ({
   container: {
     position: 'fixed',
     top: 0,
@@ -1740,12 +1761,12 @@ const styles: { [key: string]: React.CSSProperties } = {
     maxWidth: '800px',
     margin: '0 auto',
     zIndex: 1000,
-    backgroundColor: 'rgba(255, 255, 255, 0.95)',
+    backgroundColor: isDark ? 'rgba(31, 41, 55, 0.95)' : 'rgba(255, 255, 255, 0.95)',
     backdropFilter: 'blur(10px)',
     borderRadius: '12px',
     padding: SPACING.xs,
-    boxShadow: '0 8px 32px rgba(0,0,0,0.25)',
-},
+    boxShadow: isDark ? '0 8px 32px rgba(0,0,0,0.5)' : '0 8px 32px rgba(0,0,0,0.25)',
+  },
   filterRow: {
     display: 'flex',
     gap: SPACING.xs,
@@ -1755,8 +1776,8 @@ const styles: { [key: string]: React.CSSProperties } = {
     padding: `${SPACING.sm} ${SPACING.md}`,
     fontSize: TYPOGRAPHY.fontSize.sm,
     fontWeight: TYPOGRAPHY.fontWeight.semibold,
-    color: COLORS.textInverse,
-    backgroundColor: COLORS.accentWarning,
+    color: colors.textInverse,
+    backgroundColor: colors.accentWarning,
     border: 'none',
     borderRadius: '8px',
     cursor: 'pointer',
@@ -1767,18 +1788,18 @@ const styles: { [key: string]: React.CSSProperties } = {
     padding: `${SPACING.sm} ${SPACING.md}`,
     fontSize: TYPOGRAPHY.fontSize.sm,
     fontWeight: TYPOGRAPHY.fontWeight.medium,
-    color: COLORS.text,
-    backgroundColor: COLORS.background,
-    border: `2px solid ${COLORS.border}`,
+    color: colors.text,
+    backgroundColor: colors.surface,
+    border: `2px solid ${colors.border}`,
     borderRadius: '8px',
     cursor: 'pointer',
     whiteSpace: 'nowrap',
     flexShrink: 0,
   },
   filterButtonActive: {
-    backgroundColor: COLORS.accent,
-    color: COLORS.textInverse,
-    borderColor: COLORS.accent,
+    backgroundColor: colors.accent,
+    color: colors.textInverse,
+    borderColor: colors.accent,
   },
   categoryFiltersScroll: {
     display: 'flex',
@@ -1793,9 +1814,9 @@ const styles: { [key: string]: React.CSSProperties } = {
     padding: `${SPACING.sm} ${SPACING.md}`,
     fontSize: TYPOGRAPHY.fontSize.sm,
     fontWeight: TYPOGRAPHY.fontWeight.medium,
-    color: COLORS.text,
-    backgroundColor: COLORS.background,
-    border: `2px solid ${COLORS.border}`,
+    color: colors.text,
+    backgroundColor: colors.surface,
+    border: `2px solid ${colors.border}`,
     borderRadius: '8px',
     cursor: 'pointer',
     whiteSpace: 'nowrap',
@@ -1805,9 +1826,9 @@ const styles: { [key: string]: React.CSSProperties } = {
     padding: `${SPACING.sm} ${SPACING.md}`,
     fontSize: '20px',
     fontWeight: TYPOGRAPHY.fontWeight.medium,
-    color: COLORS.text,
-    backgroundColor: COLORS.background,
-    border: `2px solid ${COLORS.border}`,
+    color: colors.text,
+    backgroundColor: colors.surface,
+    border: `2px solid ${colors.border}`,
     borderRadius: '8px',
     cursor: 'pointer',
     whiteSpace: 'nowrap',
@@ -1825,15 +1846,15 @@ const styles: { [key: string]: React.CSSProperties } = {
     top: SPACING.sm,
     right: SPACING.sm,
     padding: `${SPACING.xs} ${SPACING.sm}`,
-    backgroundColor: 'rgba(255, 255, 255, 0.95)',
+    backgroundColor: isDark ? 'rgba(31, 41, 55, 0.95)' : 'rgba(255, 255, 255, 0.95)',
     backdropFilter: 'blur(10px)',
     borderRadius: '8px',
     fontSize: TYPOGRAPHY.fontSize.sm,
     fontWeight: TYPOGRAPHY.fontWeight.semibold,
-    color: COLORS.text,
-    boxShadow: '0 4px 8px rgba(0,0,0,0.15)', 
+    color: colors.text,
+    boxShadow: isDark ? '0 4px 8px rgba(0,0,0,0.4)' : '0 4px 8px rgba(0,0,0,0.15)',
     zIndex: 1000,
-},
+  },
   dhsContainer: {
     position: 'absolute',
     top: 0,
@@ -1853,11 +1874,11 @@ const styles: { [key: string]: React.CSSProperties } = {
     maxHeight: '75vh',
     overflowY: 'auto',
     padding: SPACING.xl,
-    backgroundColor: COLORS.background,
+    backgroundColor: colors.background,
     borderRadius: '16px',
-    boxShadow: '0 12px 40px rgba(0,0,0,0.2)',
+    boxShadow: isDark ? '0 12px 40px rgba(0,0,0,0.5)' : '0 12px 40px rgba(0,0,0,0.2)',
     textAlign: 'left',
-},
+  },
   dhsIcon: {
     fontSize: '48px',
     marginBottom: SPACING.sm,
@@ -1866,26 +1887,26 @@ const styles: { [key: string]: React.CSSProperties } = {
   dhsTitle: {
     fontSize: TYPOGRAPHY.fontSize['2xl'],
     fontWeight: TYPOGRAPHY.fontWeight.bold,
-    color: COLORS.primary,
+    color: colors.primary,
     marginBottom: SPACING.xs,
     textAlign: 'center',
   },
   dhsSubtitle: {
     fontSize: TYPOGRAPHY.fontSize.base,
     fontWeight: TYPOGRAPHY.fontWeight.medium,
-    color: COLORS.textSecondary,
+    color: colors.textSecondary,
     marginBottom: SPACING.lg,
     textAlign: 'center',
   },
   dhsText: {
     fontSize: TYPOGRAPHY.fontSize.base,
     lineHeight: TYPOGRAPHY.lineHeight.relaxed,
-    color: COLORS.text,
+    color: colors.text,
     marginBottom: SPACING.md,
   },
   dhsWarningBlock: {
-    backgroundColor: '#FFF4E6',
-    border: '2px solid #FFB84D',
+    backgroundColor: isDark ? '#78350F' : '#FFF4E6',
+    border: `2px solid ${isDark ? '#F59E0B' : '#FFB84D'}`,
     borderRadius: '8px',
     padding: SPACING.md,
     marginBottom: SPACING.lg,
@@ -1893,7 +1914,7 @@ const styles: { [key: string]: React.CSSProperties } = {
   dhsWarningText: {
     fontSize: TYPOGRAPHY.fontSize.sm,
     lineHeight: TYPOGRAPHY.lineHeight.relaxed,
-    color: '#744210',
+    color: isDark ? '#FEF3C7' : '#744210',
     margin: 0,
   },
   dhsActionRow: {
@@ -1906,8 +1927,8 @@ const styles: { [key: string]: React.CSSProperties } = {
     padding: SPACING.md,
     fontSize: TYPOGRAPHY.fontSize.base,
     fontWeight: TYPOGRAPHY.fontWeight.semibold,
-    color: COLORS.textInverse,
-    backgroundColor: COLORS.accent,
+    color: colors.textInverse,
+    backgroundColor: colors.accent,
     border: 'none',
     borderRadius: '8px',
     cursor: 'pointer',
@@ -1927,18 +1948,18 @@ const styles: { [key: string]: React.CSSProperties } = {
   dhsSection: {
     marginBottom: SPACING.xl,
     paddingBottom: SPACING.lg,
-    borderBottom: `1px solid ${COLORS.border}`,
+    borderBottom: `1px solid ${colors.border}`,
   },
   dhsSectionTitle: {
     fontSize: TYPOGRAPHY.fontSize.lg,
     fontWeight: TYPOGRAPHY.fontWeight.bold,
-    color: COLORS.text,
+    color: colors.text,
     marginBottom: SPACING.xs,
     marginTop: 0,
   },
   dhsSectionSubtext: {
     fontSize: TYPOGRAPHY.fontSize.sm,
-    color: COLORS.textSecondary,
+    color: colors.textSecondary,
     marginBottom: SPACING.md,
     fontStyle: 'italic',
   },
@@ -1951,9 +1972,10 @@ const styles: { [key: string]: React.CSSProperties } = {
     display: 'flex',
     flexDirection: 'column',
     gap: SPACING.xs,
+    color: colors.text,
   },
   dhsAddressLink: {
-    color: COLORS.primary,
+    color: colors.primary,
     textDecoration: 'none',
     fontSize: TYPOGRAPHY.fontSize.sm,
     paddingLeft: SPACING.md,
@@ -1964,9 +1986,9 @@ const styles: { [key: string]: React.CSSProperties } = {
     padding: `${SPACING.sm} ${SPACING.lg}`,
     fontSize: TYPOGRAPHY.fontSize.base,
     fontWeight: TYPOGRAPHY.fontWeight.medium,
-    color: COLORS.primary,
+    color: colors.primary,
     backgroundColor: 'transparent',
-    border: `2px solid ${COLORS.primary}`,
+    border: `2px solid ${colors.primary}`,
     borderRadius: '8px',
     cursor: 'pointer',
     marginTop: SPACING.md,
@@ -1978,7 +2000,7 @@ const styles: { [key: string]: React.CSSProperties } = {
     left: 0,
     right: 0,
     bottom: 0,
-    backgroundColor: 'rgba(255, 255, 255, 0.8)',
+    backgroundColor: isDark ? 'rgba(17, 24, 39, 0.8)' : 'rgba(255, 255, 255, 0.8)',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
@@ -1994,15 +2016,15 @@ const styles: { [key: string]: React.CSSProperties } = {
   spinner: {
     width: '50px',
     height: '50px',
-    border: `4px solid ${COLORS.backgroundGray}`,
-    borderTop: `4px solid ${COLORS.primary}`,
+    border: `4px solid ${colors.border}`,
+    borderTop: `4px solid ${colors.primary}`,
     borderRadius: '50%',
     animation: 'spin 1s linear infinite',
   },
   loadingText: {
     fontSize: TYPOGRAPHY.fontSize.base,
     fontWeight: TYPOGRAPHY.fontWeight.semibold,
-    color: COLORS.text,
+    color: colors.text,
   },
   // NETWORK ERROR BANNER STYLES
   networkErrorBanner: {
@@ -2048,6 +2070,6 @@ const styles: { [key: string]: React.CSSProperties } = {
     transition: 'all 0.2s',
     flexShrink: 0,
   },
-};
+});
 
 export default MapScreen;

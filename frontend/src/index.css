@@ -39,6 +39,53 @@ code {
   background-color: white;
 }
 
+/* Dark mode support for Leaflet popups */
+@media (prefers-color-scheme: dark) {
+  .leaflet-popup-content-wrapper {
+    background-color: #1F2937 !important;
+    color: #F3F4F6 !important;
+  }
+
+  .leaflet-popup-tip {
+    background-color: #1F2937 !important;
+  }
+
+  .leaflet-popup-content {
+    background:
+      /* Top Shadow (Hidden) */
+      linear-gradient(#1F2937 30%, rgba(31,41,55,0)) center top,
+      /* Bottom Shadow (The Fade Out) */
+      linear-gradient(rgba(31,41,55,0), #1F2937 70%) center bottom,
+      /* Darker Radial Shadow for depth */
+      radial-gradient(farthest-side at 50% 100%, rgba(0,0,0,0.3), rgba(0,0,0,0)) center bottom !important;
+    background-repeat: no-repeat !important;
+    background-size: 100% 40px, 100% 40px, 100% 14px !important;
+    background-attachment: local, local, scroll !important;
+    background-color: #1F2937 !important;
+    color: #F3F4F6 !important;
+  }
+
+  .leaflet-popup-content h3 {
+    color: #F3F4F6 !important;
+  }
+
+  .leaflet-popup-content p {
+    color: #D1D5DB !important;
+  }
+
+  .leaflet-popup-content ul {
+    color: #D1D5DB !important;
+  }
+
+  .leaflet-popup-content a.leaflet-popup-close-button {
+    color: #9CA3AF !important;
+  }
+
+  .leaflet-popup-content a.leaflet-popup-close-button:hover {
+    color: #F3F4F6 !important;
+  }
+}
+
 /* Remove the old buggy pseudo-element */
 .leaflet-popup-content::after {
   display: none !important;

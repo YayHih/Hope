@@ -1,9 +1,73 @@
 import React from 'react';
-import { COLORS, SPACING, TYPOGRAPHY } from '../theme';
+import { SPACING, TYPOGRAPHY } from '../theme';
+import { useTheme } from '../theme/ThemeContext';
 import { useLanguage } from '../i18n/LanguageContext';
 
 const TermsOfUseScreen: React.FC = () => {
   const { t } = useLanguage();
+  const { colors, isDark } = useTheme();
+
+  const styles: { [key: string]: React.CSSProperties } = {
+    container: {
+      padding: SPACING.md,
+      maxWidth: '900px',
+      margin: '0 auto',
+      backgroundColor: colors.background,
+    },
+    content: {
+      padding: SPACING.lg,
+    },
+    header: {
+      fontSize: TYPOGRAPHY.fontSize['3xl'],
+      fontWeight: TYPOGRAPHY.fontWeight.bold,
+      color: colors.primary,
+      marginBottom: SPACING.sm,
+      textAlign: 'center',
+    },
+    lastUpdated: {
+      fontSize: TYPOGRAPHY.fontSize.sm,
+      color: colors.textSecondary,
+      textAlign: 'center',
+      marginBottom: SPACING.xl,
+    },
+    subheader: {
+      fontSize: TYPOGRAPHY.fontSize.xl,
+      fontWeight: TYPOGRAPHY.fontWeight.semibold,
+      color: colors.text,
+      marginBottom: SPACING.sm,
+      marginTop: SPACING.md,
+    },
+    disclaimerCard: {
+      backgroundColor: isDark ? 'rgba(237, 137, 54, 0.15)' : '#FFF5F5',
+      padding: SPACING.lg,
+      borderRadius: '12px',
+      marginBottom: SPACING.xl,
+      border: `2px solid ${colors.accentWarning}`,
+    },
+    section: {
+      marginBottom: SPACING.xl,
+    },
+    text: {
+      fontSize: TYPOGRAPHY.fontSize.base,
+      lineHeight: TYPOGRAPHY.lineHeight.relaxed,
+      color: colors.text,
+      marginBottom: SPACING.sm,
+    },
+    list: {
+      margin: `${SPACING.sm} 0`,
+      paddingLeft: SPACING.xl,
+    },
+    listItem: {
+      fontSize: TYPOGRAPHY.fontSize.base,
+      lineHeight: TYPOGRAPHY.lineHeight.relaxed,
+      color: colors.text,
+      marginBottom: SPACING.sm,
+    },
+    link: {
+      color: colors.primary,
+      textDecoration: 'underline',
+    },
+  };
 
   return (
     <div style={styles.container}>
@@ -179,68 +243,6 @@ const TermsOfUseScreen: React.FC = () => {
       </div>
     </div>
   );
-};
-
-const styles: { [key: string]: React.CSSProperties } = {
-  container: {
-    padding: SPACING.md,
-    maxWidth: '900px',
-    margin: '0 auto',
-    backgroundColor: COLORS.background,
-  },
-  content: {
-    padding: SPACING.lg,
-  },
-  header: {
-    fontSize: TYPOGRAPHY.fontSize['3xl'],
-    fontWeight: TYPOGRAPHY.fontWeight.bold,
-    color: COLORS.primary,
-    marginBottom: SPACING.sm,
-    textAlign: 'center',
-  },
-  lastUpdated: {
-    fontSize: TYPOGRAPHY.fontSize.sm,
-    color: COLORS.textSecondary,
-    textAlign: 'center',
-    marginBottom: SPACING.xl,
-  },
-  subheader: {
-    fontSize: TYPOGRAPHY.fontSize.xl,
-    fontWeight: TYPOGRAPHY.fontWeight.semibold,
-    color: COLORS.text,
-    marginBottom: SPACING.sm,
-    marginTop: SPACING.md,
-  },
-  disclaimerCard: {
-    backgroundColor: '#FFF5F5',
-    padding: SPACING.lg,
-    borderRadius: '12px',
-    marginBottom: SPACING.xl,
-    border: `2px solid ${COLORS.accentWarning}`,
-  },
-  section: {
-    marginBottom: SPACING.xl,
-  },
-  text: {
-    fontSize: TYPOGRAPHY.fontSize.base,
-    lineHeight: TYPOGRAPHY.lineHeight.relaxed,
-    color: COLORS.text,
-    marginBottom: SPACING.sm,
-  },
-  list: {
-    margin: `${SPACING.sm} 0`,
-    paddingLeft: SPACING.xl,
-  },
-  listItem: {
-    fontSize: TYPOGRAPHY.fontSize.base,
-    lineHeight: TYPOGRAPHY.lineHeight.relaxed,
-    color: COLORS.text,
-    marginBottom: SPACING.sm,
-  },
-  link: {
-    color: COLORS.primary,
-    textDecoration: 'underline',
-  },
 };
 
 export default TermsOfUseScreen;

@@ -1,9 +1,11 @@
 import React from 'react';
-import { COLORS, SPACING, TYPOGRAPHY } from '../theme';
+import { SPACING, TYPOGRAPHY } from '../theme';
+import { useTheme } from '../theme/ThemeContext';
 import { useLanguage } from '../i18n/LanguageContext';
 
 const HowItWorksScreen: React.FC = () => {
   const { t } = useLanguage();
+  const { colors } = useTheme();
 
   const steps = [
     {
@@ -32,6 +34,58 @@ const HowItWorksScreen: React.FC = () => {
     },
   ];
 
+  const styles: { [key: string]: React.CSSProperties } = {
+    container: {
+      padding: SPACING.md,
+      maxWidth: '800px',
+      margin: '0 auto',
+      backgroundColor: colors.background,
+    },
+    content: {
+      padding: SPACING.lg,
+    },
+    header: {
+      fontSize: TYPOGRAPHY.fontSize['3xl'],
+      fontWeight: TYPOGRAPHY.fontWeight.bold,
+      color: colors.primary,
+      marginBottom: SPACING.xl,
+      textAlign: 'center',
+    },
+    stepsContainer: {
+      display: 'flex',
+      flexDirection: 'column',
+      gap: SPACING.lg,
+    },
+    stepCard: {
+      display: 'flex',
+      alignItems: 'flex-start',
+      gap: SPACING.md,
+      backgroundColor: colors.surface,
+      padding: SPACING.lg,
+      borderRadius: '12px',
+      boxShadow: `0 2px 4px ${colors.shadowColor}`,
+      border: `1px solid ${colors.border}`,
+    },
+    stepIcon: {
+      fontSize: '48px',
+      flexShrink: 0,
+    },
+    stepContent: {
+      flex: 1,
+    },
+    stepTitle: {
+      fontSize: TYPOGRAPHY.fontSize.lg,
+      fontWeight: TYPOGRAPHY.fontWeight.semibold,
+      color: colors.text,
+      marginBottom: SPACING.sm,
+    },
+    stepDescription: {
+      fontSize: TYPOGRAPHY.fontSize.base,
+      lineHeight: TYPOGRAPHY.lineHeight.relaxed,
+      color: colors.textSecondary,
+    },
+  };
+
   return (
     <div style={styles.container}>
       <div style={styles.content}>
@@ -53,57 +107,6 @@ const HowItWorksScreen: React.FC = () => {
       </div>
     </div>
   );
-};
-
-const styles: { [key: string]: React.CSSProperties } = {
-  container: {
-    padding: SPACING.md,
-    maxWidth: '800px',
-    margin: '0 auto',
-    backgroundColor: COLORS.background,
-  },
-  content: {
-    padding: SPACING.lg,
-  },
-  header: {
-    fontSize: TYPOGRAPHY.fontSize['3xl'],
-    fontWeight: TYPOGRAPHY.fontWeight.bold,
-    color: COLORS.primary,
-    marginBottom: SPACING.xl,
-    textAlign: 'center',
-  },
-  stepsContainer: {
-    display: 'flex',
-    flexDirection: 'column',
-    gap: SPACING.lg,
-  },
-  stepCard: {
-    display: 'flex',
-    alignItems: 'flex-start',
-    gap: SPACING.md,
-    backgroundColor: COLORS.backgroundGray,
-    padding: SPACING.lg,
-    borderRadius: '12px',
-    boxShadow: '0 2px 4px rgba(0,0,0,0.05)',
-  },
-  stepIcon: {
-    fontSize: '48px',
-    flexShrink: 0,
-  },
-  stepContent: {
-    flex: 1,
-  },
-  stepTitle: {
-    fontSize: TYPOGRAPHY.fontSize.lg,
-    fontWeight: TYPOGRAPHY.fontWeight.semibold,
-    color: COLORS.text,
-    marginBottom: SPACING.sm,
-  },
-  stepDescription: {
-    fontSize: TYPOGRAPHY.fontSize.base,
-    lineHeight: TYPOGRAPHY.lineHeight.relaxed,
-    color: COLORS.textSecondary,
-  },
 };
 
 export default HowItWorksScreen;

@@ -1,7 +1,8 @@
 import React, { useState, useRef } from 'react';
 import axios from 'axios';
 import ReCAPTCHA from 'react-google-recaptcha';
-import { COLORS, SPACING, TYPOGRAPHY } from '../theme';
+import { SPACING, TYPOGRAPHY } from '../theme';
+import { useTheme } from '../theme/ThemeContext';
 import { useLanguage } from '../i18n/LanguageContext';
 
 const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'https://hopefornyc.com/api/v1';
@@ -9,6 +10,7 @@ const RECAPTCHA_SITE_KEY = process.env.REACT_APP_RECAPTCHA_SITE_KEY || '';
 
 const ReportIssueScreen: React.FC = () => {
   const { t } = useLanguage();
+  const { colors, isDark } = useTheme();
   const [selectedIssue, setSelectedIssue] = useState<string>('');
   const [locationName, setLocationName] = useState<string>('');
   const [description, setDescription] = useState<string>('');
@@ -32,7 +34,6 @@ const ReportIssueScreen: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    // Validation
     if (!selectedIssue) {
       alert(t('pleaseSelectIssue'));
       return;
@@ -86,6 +87,132 @@ const ReportIssueScreen: React.FC = () => {
     } finally {
       setIsSubmitting(false);
     }
+  };
+
+  const styles: { [key: string]: React.CSSProperties } = {
+    container: {
+      padding: SPACING.md,
+      maxWidth: '800px',
+      margin: '0 auto',
+      backgroundColor: colors.background,
+    },
+    content: {
+      padding: SPACING.lg,
+    },
+    header: {
+      fontSize: TYPOGRAPHY.fontSize['3xl'],
+      fontWeight: TYPOGRAPHY.fontWeight.bold,
+      color: colors.primary,
+      marginBottom: SPACING.md,
+      textAlign: 'center',
+    },
+    description: {
+      fontSize: TYPOGRAPHY.fontSize.base,
+      lineHeight: TYPOGRAPHY.lineHeight.relaxed,
+      color: colors.textSecondary,
+      textAlign: 'center',
+      marginBottom: SPACING.xl,
+    },
+    form: {
+      display: 'flex',
+      flexDirection: 'column',
+      gap: SPACING.lg,
+    },
+    formGroup: {
+      display: 'flex',
+      flexDirection: 'column',
+      gap: SPACING.sm,
+    },
+    label: {
+      fontSize: TYPOGRAPHY.fontSize.base,
+      fontWeight: TYPOGRAPHY.fontWeight.semibold,
+      color: colors.text,
+    },
+    required: {
+      color: colors.accentError,
+    },
+    select: {
+      padding: SPACING.md,
+      fontSize: TYPOGRAPHY.fontSize.base,
+      border: `1px solid ${colors.border}`,
+      borderRadius: '8px',
+      backgroundColor: colors.surface,
+      color: colors.text,
+      cursor: 'pointer',
+    },
+    input: {
+      padding: SPACING.md,
+      fontSize: TYPOGRAPHY.fontSize.base,
+      border: `1px solid ${colors.border}`,
+      borderRadius: '8px',
+      backgroundColor: colors.surface,
+      color: colors.text,
+    },
+    textarea: {
+      padding: SPACING.md,
+      fontSize: TYPOGRAPHY.fontSize.base,
+      border: `1px solid ${colors.border}`,
+      borderRadius: '8px',
+      backgroundColor: colors.surface,
+      color: colors.text,
+      fontFamily: TYPOGRAPHY.fontFamily,
+      resize: 'vertical' as const,
+    },
+    charCount: {
+      fontSize: TYPOGRAPHY.fontSize.sm,
+      color: colors.textLight,
+      textAlign: 'right',
+    },
+    recaptchaContainer: {
+      display: 'flex',
+      justifyContent: 'center',
+      marginTop: SPACING.md,
+    },
+    submitButton: {
+      padding: `${SPACING.md} ${SPACING.xl}`,
+      fontSize: TYPOGRAPHY.fontSize.base,
+      fontWeight: TYPOGRAPHY.fontWeight.semibold,
+      color: colors.textInverse,
+      backgroundColor: colors.primary,
+      border: 'none',
+      borderRadius: '8px',
+      cursor: 'pointer',
+      marginTop: SPACING.md,
+      transition: 'background-color 0.2s',
+    },
+    submitButtonDisabled: {
+      backgroundColor: colors.textLight,
+      cursor: 'not-allowed',
+    },
+    successMessage: {
+      padding: SPACING.md,
+      backgroundColor: isDark ? 'rgba(72, 187, 120, 0.15)' : '#F0FFF4',
+      border: `2px solid ${colors.accent}`,
+      borderRadius: '8px',
+      color: colors.accent,
+      textAlign: 'center',
+      fontWeight: TYPOGRAPHY.fontWeight.semibold,
+    },
+    errorMessage: {
+      padding: SPACING.md,
+      backgroundColor: isDark ? 'rgba(252, 129, 129, 0.15)' : '#FFF5F5',
+      border: `2px solid ${colors.accentError}`,
+      borderRadius: '8px',
+      color: colors.accentError,
+      textAlign: 'center',
+      fontWeight: TYPOGRAPHY.fontWeight.semibold,
+    },
+    note: {
+      marginTop: SPACING.xl,
+      padding: SPACING.md,
+      backgroundColor: colors.backgroundSecondary,
+      borderRadius: '8px',
+    },
+    noteText: {
+      fontSize: TYPOGRAPHY.fontSize.sm,
+      color: colors.textSecondary,
+      margin: 0,
+    },
   };
 
   return (
@@ -150,12 +277,12 @@ const ReportIssueScreen: React.FC = () => {
             </div>
           </div>
 
-          {/* reCAPTCHA */}
           <div style={styles.recaptchaContainer}>
             <ReCAPTCHA
               ref={recaptchaRef}
               sitekey={RECAPTCHA_SITE_KEY}
               onChange={handleCaptchaChange}
+              theme={isDark ? 'dark' : 'light'}
             />
           </div>
 
@@ -191,132 +318,6 @@ const ReportIssueScreen: React.FC = () => {
       </div>
     </div>
   );
-};
-
-const styles: { [key: string]: React.CSSProperties } = {
-  container: {
-    padding: SPACING.md,
-    maxWidth: '800px',
-    margin: '0 auto',
-    backgroundColor: COLORS.background,
-  },
-  content: {
-    padding: SPACING.lg,
-  },
-  header: {
-    fontSize: TYPOGRAPHY.fontSize['3xl'],
-    fontWeight: TYPOGRAPHY.fontWeight.bold,
-    color: COLORS.primary,
-    marginBottom: SPACING.md,
-    textAlign: 'center',
-  },
-  description: {
-    fontSize: TYPOGRAPHY.fontSize.base,
-    lineHeight: TYPOGRAPHY.lineHeight.relaxed,
-    color: COLORS.textSecondary,
-    textAlign: 'center',
-    marginBottom: SPACING.xl,
-  },
-  form: {
-    display: 'flex',
-    flexDirection: 'column',
-    gap: SPACING.lg,
-  },
-  formGroup: {
-    display: 'flex',
-    flexDirection: 'column',
-    gap: SPACING.sm,
-  },
-  label: {
-    fontSize: TYPOGRAPHY.fontSize.base,
-    fontWeight: TYPOGRAPHY.fontWeight.semibold,
-    color: COLORS.text,
-  },
-  required: {
-    color: COLORS.accentError,
-  },
-  select: {
-    padding: SPACING.md,
-    fontSize: TYPOGRAPHY.fontSize.base,
-    border: `1px solid ${COLORS.border}`,
-    borderRadius: '8px',
-    backgroundColor: COLORS.background,
-    color: COLORS.text,
-    cursor: 'pointer',
-  },
-  input: {
-    padding: SPACING.md,
-    fontSize: TYPOGRAPHY.fontSize.base,
-    border: `1px solid ${COLORS.border}`,
-    borderRadius: '8px',
-    backgroundColor: COLORS.background,
-    color: COLORS.text,
-  },
-  textarea: {
-    padding: SPACING.md,
-    fontSize: TYPOGRAPHY.fontSize.base,
-    border: `1px solid ${COLORS.border}`,
-    borderRadius: '8px',
-    backgroundColor: COLORS.background,
-    color: COLORS.text,
-    fontFamily: TYPOGRAPHY.fontFamily,
-    resize: 'vertical' as const,
-  },
-  charCount: {
-    fontSize: TYPOGRAPHY.fontSize.sm,
-    color: COLORS.textLight,
-    textAlign: 'right',
-  },
-  recaptchaContainer: {
-    display: 'flex',
-    justifyContent: 'center',
-    marginTop: SPACING.md,
-  },
-  submitButton: {
-    padding: `${SPACING.md} ${SPACING.xl}`,
-    fontSize: TYPOGRAPHY.fontSize.base,
-    fontWeight: TYPOGRAPHY.fontWeight.semibold,
-    color: COLORS.textInverse,
-    backgroundColor: COLORS.primary,
-    border: 'none',
-    borderRadius: '8px',
-    cursor: 'pointer',
-    marginTop: SPACING.md,
-    transition: 'background-color 0.2s',
-  },
-  submitButtonDisabled: {
-    backgroundColor: COLORS.textLight,
-    cursor: 'not-allowed',
-  },
-  successMessage: {
-    padding: SPACING.md,
-    backgroundColor: '#F0FFF4',
-    border: `2px solid ${COLORS.accent}`,
-    borderRadius: '8px',
-    color: COLORS.accent,
-    textAlign: 'center',
-    fontWeight: TYPOGRAPHY.fontWeight.semibold,
-  },
-  errorMessage: {
-    padding: SPACING.md,
-    backgroundColor: '#FFF5F5',
-    border: `2px solid ${COLORS.accentError}`,
-    borderRadius: '8px',
-    color: COLORS.accentError,
-    textAlign: 'center',
-    fontWeight: TYPOGRAPHY.fontWeight.semibold,
-  },
-  note: {
-    marginTop: SPACING.xl,
-    padding: SPACING.md,
-    backgroundColor: COLORS.backgroundGray,
-    borderRadius: '8px',
-  },
-  noteText: {
-    fontSize: TYPOGRAPHY.fontSize.sm,
-    color: COLORS.textSecondary,
-    margin: 0,
-  },
 };
 
 export default ReportIssueScreen;
