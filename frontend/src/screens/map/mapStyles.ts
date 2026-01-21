@@ -34,6 +34,10 @@ export const getMapStyles = (colors: any, isDark: boolean): { [key: string]: Rea
     display: 'flex',
     gap: SPACING.xs,
     marginBottom: SPACING.xs,
+    overflowX: 'auto',
+    overflowY: 'hidden',
+    scrollbarWidth: 'thin',
+    WebkitOverflowScrolling: 'touch',
   },
   dhsToggleButton: {
     padding: `${SPACING.sm} ${SPACING.md}`,
@@ -103,20 +107,6 @@ export const getMapStyles = (colors: any, isDark: boolean): { [key: string]: Rea
   mapContainer: {
     flex: 1,
     position: 'relative',
-  },
-  resultsCount: {
-    position: 'absolute',
-    top: SPACING.sm,
-    right: SPACING.sm,
-    padding: `${SPACING.xs} ${SPACING.sm}`,
-    backgroundColor: isDark ? 'rgba(31, 41, 55, 0.95)' : 'rgba(255, 255, 255, 0.95)',
-    backdropFilter: 'blur(10px)',
-    borderRadius: '8px',
-    fontSize: TYPOGRAPHY.fontSize.sm,
-    fontWeight: TYPOGRAPHY.fontWeight.semibold,
-    color: colors.text,
-    boxShadow: isDark ? '0 4px 8px rgba(0,0,0,0.4)' : '0 4px 8px rgba(0,0,0,0.15)',
-    zIndex: 1000,
   },
   loadingOverlay: {
     position: 'absolute',

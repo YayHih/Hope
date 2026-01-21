@@ -556,11 +556,6 @@ const MapScreen: React.FC = () => {
         />
       )}
 
-      {/* Results count */}
-      <div style={styles.resultsCount}>
-        {isLoading ? t('loading') : `${visibleServices.length} ${t('locationsFound')}`}
-      </div>
-
       {/* Map */}
       <div style={styles.mapContainer}>
         {/* Loading indicator */}
@@ -578,16 +573,16 @@ const MapScreen: React.FC = () => {
               🏛️ {t('dhsOfficial')}
             </button>
 
+            <button onClick={handleCenterMap} style={styles.centerButton} title="Center map on my location" aria-label="Center map on my location">
+              🎯
+            </button>
+
             <button onClick={() => setOpenNow(!openNow)} style={{ ...styles.filterButton, ...(openNow ? styles.filterButtonActive : {}) }}>
               {openNow ? '✓ ' : ''}{t('openNow')}
             </button>
 
             <button onClick={() => setOpenToday(!openToday)} style={{ ...styles.filterButton, ...(openToday ? styles.filterButtonActive : {}) }}>
               {openToday ? '✓ ' : ''}{t('openToday')}
-            </button>
-
-            <button onClick={handleCenterMap} style={styles.centerButton} title="Center map on my location" aria-label="Center map on my location">
-              🎯
             </button>
           </div>
 
