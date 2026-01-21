@@ -15,11 +15,17 @@ React-based frontend for the Hope Platform - NYC homeless services directory.
 ## Features
 
 ### Dark Mode Support
-The app automatically follows the system theme preference:
+The app supports both automatic and manual dark mode:
 - **Light mode**: Carto Voyager map tiles, light UI elements
 - **Dark mode**: Carto Dark Matter map tiles, dark UI elements
 
-Theme detection uses the `prefers-color-scheme` media query and updates in real-time when the system theme changes.
+**Theme Toggle**: Users can manually switch between light and dark mode using the toggle button in the header. The preference is persisted in localStorage.
+
+**Implementation**: The theme is managed via React Context (`ThemeContext.tsx`) which:
+- Adds/removes `dark-mode` class on `<body>` for CSS targeting (used by Leaflet popups)
+- Sets `data-theme` attribute on `<html>` for potential CSS variable usage
+- Persists user preference to localStorage under key `theme-mode`
+- Falls back to system preference (`prefers-color-scheme`) if no saved preference
 
 ## Development
 
@@ -109,25 +115,56 @@ Implemented with `react-leaflet-markercluster`:
 - `spiderfyOnMaxZoom={true}` - Spread out overlapping markers when fully zoomed
 - `chunkedLoading` - Improves performance with large datasets
 
-### Service Type Filters
+### Filter Bar
 
-Users can filter by service type:
+The map includes a two-row filter bar at the bottom of the screen:
+
+**Top Row** (scrollable on mobile):
+- **DHS Official** (yellow) - Opens informational card about NYC DHS intake process
+- **Center Button** (🎯) - Centers map on user's current location
+- **Open Now** - Filters to show only locations currently open
+- **Open Today** - Filters to show locations open at any point today
+
+**Category Row** (scrollable):
 - Food (with sub-filters: Hot Meals, Groceries)
-- Shelter
-- Hygiene
-- Healthcare
-- Legal
-- Employment
+- Intake Center
+- Drop-In Center
 - Mental Health Crisis (with sub-filters: CPEP Emergency, Other Crisis)
+- Youth Services
+- Free WiFi & Charging
+- Benefits & ID Help
+- Case Management
+- Hygiene
+- Medical
+- Hospitals
+- Public Restrooms
+- Warming Center
+- Cooling Center
 - DV Hotline (direct phone link)
 
-Filters update the map in real-time by passing `service_types` parameter to the backend API.
+Filters update the map in real-time by passing `service_types`, `open_now`, and `open_today` parameters to the backend API.
 
 ### DHS Information Card
 Yellow "DHS Official" button opens an informational card with:
 - NYC DHS intake locations and addresses
 - Direct call links for 311 and Safe Horizon hotline
 - Important warnings about the intake process
+
+## Code Organization
+
+### MapScreen Modularization
+The main `MapScreen.tsx` was refactored from ~2000 lines into smaller, focused modules in `screens/map/`:
+
+| Module | Purpose |
+|--------|---------|
+| `mapHelpers.ts` | Types (`ServiceLocation`, `ServiceType`), constants (`API_BASE_URL`, `KM_PER_MILE`), utility functions (icon creation, time formatting, phone validation) |
+| `mapStyles.ts` | All dynamic styles via `getMapStyles(colors, isDark)` function |
+| `DHSInfoCard.tsx` | DHS Safe Options overlay with intake locations and hotlines |
+| `MapControls.tsx` | `MapEventHandler`, `MapCenterController`, `MarkerWithClick` components |
+| `WeeklyHoursDropdown.tsx` | Expandable weekly hours display in popups |
+| `index.ts` | Barrel exports for clean imports |
+
+This structure improves maintainability while keeping the main `MapScreen.tsx` focused on rendering and state management.
 
 ## Performance Optimizations
 
@@ -177,7 +214,14 @@ frontend/
 │   │   ├── Header.tsx     # App header with language switcher
 │   │   └── BottomNav.tsx  # Bottom navigation bar
 │   ├── screens/
-│   │   ├── MapScreen.tsx  # Main map interface (PRIMARY FILE)
+│   │   ├── MapScreen.tsx  # Main map interface
+│   │   ├── map/           # Map-related modules (extracted for maintainability)
+│   │   │   ├── index.ts           # Barrel exports
+│   │   │   ├── mapHelpers.ts      # Helper functions, types, constants
+│   │   │   ├── mapStyles.ts       # Dynamic style definitions
+│   │   │   ├── DHSInfoCard.tsx    # DHS information overlay component
+│   │   │   ├── MapControls.tsx    # Map event handlers and controllers
+│   │   │   └── WeeklyHoursDropdown.tsx  # Operating hours dropdown
 │   │   ├── AboutScreen.tsx
 │   │   ├── HowItWorksScreen.tsx
 │   │   ├── PrivacyPolicyScreen.tsx
