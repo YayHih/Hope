@@ -1,0 +1,37 @@
+Architectural Overhaul & Feature Roadmap
+1. Backend & Data Schema (FastAPI)
+Goal: Move all logic to the server. The Frontend should be "dumb" and just render what it receives.
+
+Action: Create a new Pydantic model (ServiceLocationPublic) that acts as the "Golden Object."
+
+Computed Fields: Add icon_url, is_verified (bool), last_verified_text (str), and alert (obj).
+
+Logic Migration: Port the getFoodSubCategory and getCrisisSubCategory logic from TypeScript (mapHelpers.ts) into Python properties on the model.
+
+Alerts: Expose the temporary_closures table as an alert object on the location (e.g., { "color": "red", "msg": "Closed for Repairs" }).
+
+Endpoint: Ensure /api/v1/public/services/all returns the full compressed list of ~4,000 locations for the initial sync.
+
+2. Frontend Architecture (Vite + Offline-First)
+Stack: Initialize new app with Vite + React + TypeScript + Tailwind CSS v4.
+
+"True Offline" Strategy:
+
+On Load: Fetch the entire ~4MB location dataset (gzipped).
+
+Storage: Persist this array to IndexedDB (via tanstack-query or idb-keyval).
+
+Runtime: The Map, Search, and List views must read from this local array, not the API.
+
+Search & Discovery:
+
+Implement Fuse.js running on the local data array for instant, offline-capable fuzzy search (solving the "typo" problem).
+
+Add a List View Toggle that maps the filtered local data to a simple card list (for Accessibility/Screen Readers).
+
+3. Static Assets
+Action: Generate static SVG/PNG files for every marker type (e.g., pin-soup-kitchen.svg, pin-shelter-open.svg).
+
+Placement: Store in /public/markers/.
+
+Usage: The backend icon_url field should point directly to these paths, removing the need for client-side SVG generation.
