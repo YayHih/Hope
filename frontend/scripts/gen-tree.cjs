@@ -6,7 +6,7 @@ const IGNORES = ['node_modules', '.git', 'dist', 'build'];
 const PRIORITY_ORDER = {
 	src: ['pages', 'components', 'hooks', 'services', 'utils', 'locales'],
 	pages: ['Map', 'About', 'HowItWorks', 'PrivacyPolicy', 'ReportIssue', 'TermsOfUse'],
-	components: ['features', 'layout'],
+	components: ['features', 'layout', 'modals'],
 	utils: ['types', 'constants', 'helpers'],
 	services: ['api']
 };
@@ -39,7 +39,8 @@ function generateTree(dir, prefix = '') {
 	sortedItems.forEach((item, index) => {
 		const isLast = index === sortedItems.length - 1;
 		const connector = isLast ? '└── ' : '├── ';
-		tree += prefix + connector + item.name + '\n';
+		const itemName = item.name + (item.isDirectory() ? '/' : '');
+		tree += prefix + connector + itemName + '\n';
 
 		if (item.isDirectory()) {
 			const newPrefix = prefix + (isLast ? '    ' : '│   ');
@@ -50,4 +51,4 @@ function generateTree(dir, prefix = '') {
 	return tree;
 }
 
-console.log('# Frontend Tree (Clean)\n```\n' + generateTree('.') + '\n```');
+console.log('# Frontend Tree\n```\n' + generateTree('.') + '\n```');
