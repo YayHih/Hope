@@ -1,79 +1,79 @@
-# Frontend Tree (Clean)
+# Frontend Tree
 ```
 ├── eslint.config.js
 ├── file-tree.md
 ├── index.html
 ├── package-lock.json
 ├── package.json
-├── public
+├── public/
 │   └── vite.svg
 ├── README.md
-├── scripts
+├── scripts/
 │   └── gen-tree.cjs
-├── src
-│   ├── pages
-│   │   ├── Map
+├── src/
+│   ├── pages/
+│   │   ├── Map/
 │   │   │   ├── index.ts
 │   │   │   └── MapPage.tsx
-│   │   ├── About
+│   │   ├── About/
 │   │   │   ├── About.tsx
 │   │   │   └── index.ts
-│   │   ├── HowItWorks
+│   │   ├── HowItWorks/
 │   │   │   ├── HowItWorks.tsx
 │   │   │   └── index.ts
-│   │   ├── PrivacyPolicy
+│   │   ├── PrivacyPolicy/
 │   │   │   ├── index.ts
 │   │   │   └── PrivacyPolicy.tsx
-│   │   ├── ReportIssue
+│   │   ├── ReportIssue/
 │   │   │   ├── index.ts
 │   │   │   └── ReportIssue.tsx
-│   │   └── TermsOfUse
+│   │   └── TermsOfUse/
 │   │       ├── index.ts
 │   │       └── TermsOfUse.tsx
-│   ├── components
-│   │   ├── features
-│   │   │   └── Map
+│   ├── components/
+│   │   ├── features/
+│   │   │   └── Map/
 │   │   │       ├── index.ts
 │   │   │       ├── MapIndicators.tsx
 │   │   │       ├── MapMarkers.tsx
 │   │   │       ├── MapPopup.tsx
 │   │   │       ├── MapSearch.tsx
 │   │   │       └── MapView.tsx
-│   │   ├── layout
-│   │   │   ├── Footer
-│   │   │   ├── Header
-│   │   │   └── Navigation
-│   │   └── modals
-│   │       ├── error
-│   │       ├── key
-│   │       └── reportStatus
-│   ├── hooks
+│   │   ├── layout/
+│   │   │   ├── Footer/
+│   │   │   ├── Header/
+│   │   │   └── Navigation/
+│   │   └── modals/
+│   │       ├── error/
+│   │       ├── key/
+│   │       └── reportStatus/
+│   ├── hooks/
 │   │   ├── useLanguage.ts
 │   │   └── useTheme.ts
-│   ├── services
-│   │   └── api
+│   ├── services/
+│   │   └── api/
 │   │       ├── client.ts
 │   │       ├── index.ts
 │   │       └── services.ts
-│   ├── utils
-│   │   ├── types
+│   ├── utils/
+│   │   ├── types/
 │   │   │   ├── api.ts
 │   │   │   ├── domain.ts
 │   │   │   ├── filters.ts
 │   │   │   ├── i18n.ts
 │   │   │   └── index.ts
-│   │   ├── constants
-│   │   ├── helpers
+│   │   ├── constants/
+│   │   ├── helpers/
 │   │   │   ├── cache.ts
 │   │   │   └── index.ts
 │   │   └── index.ts
-│   ├── locales
-│   │   ├── en
-│   │   ├── es
+│   ├── locales/
+│   │   ├── en/
+│   │   ├── es/
 │   │   └── index.ts
 │   ├── App.css
 │   ├── App.tsx
-│   ├── assets
+│   ├── assets/
 │   │   └── react.svg
 │   ├── index.css
 │   └── main.tsx
