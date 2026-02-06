@@ -41,8 +41,14 @@
 │   │   │       └── MapView.tsx
 │   │   ├── layout/
 │   │   │   ├── Footer/
+│   │   │   │   ├── Footer.tsx
+│   │   │   │   └── index.ts
 │   │   │   ├── Header/
+│   │   │   │   ├── Header.tsx
+│   │   │   │   └── index.ts
 │   │   │   └── Navigation/
+│   │   │       ├── index.ts
+│   │   │       └── SideNavigation.tsx
 │   │   └── modals/
 │   │       ├── error/
 │   │       ├── key/
@@ -63,6 +69,9 @@
 │   │   │   ├── i18n.ts
 │   │   │   └── index.ts
 │   │   ├── constants/
+│   │   │   ├── config.ts
+│   │   │   ├── defaults.ts
+│   │   │   └── serviceTypes.ts
 │   │   ├── helpers/
 │   │   │   ├── cache.ts
 │   │   │   └── index.ts
@@ -71,7 +80,6 @@
 │   │   ├── en/
 │   │   ├── es/
 │   │   └── index.ts
-│   ├── App.css
 │   ├── App.tsx
 │   ├── assets/
 │   │   └── react.svg
