@@ -1,293 +1,73 @@
-# Hope Frontend
+# React + TypeScript + Vite
 
-React-based frontend for the Hope Platform - NYC homeless services directory.
+This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 
-## Tech Stack
+Currently, two official plugins are available:
 
-- **React** 18.3.1
-- **TypeScript** 4.9.5
-- **React Leaflet** 4.2.1 - Interactive map with Carto tiles
-- **React Leaflet Markercluster** 3.0.0-rc1 - Marker clustering for performance
-- **i18next** 23.16.8 - Multi-language support (English, Spanish, Chinese, Arabic, French, Russian, Haitian Creole)
-- **Nominatim** - Geocoding and address search
-- **react-google-recaptcha** - Form spam protection
+- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
+- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
 
-## Features
+## React Compiler
 
-### Dark Mode Support
-The app supports both automatic and manual dark mode:
-- **Light mode**: Carto Voyager map tiles, light UI elements
-- **Dark mode**: Carto Dark Matter map tiles, dark UI elements
+The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
 
-**Theme Toggle**: Users can manually switch between light and dark mode using the toggle button in the header. The preference is persisted in localStorage.
+## Expanding the ESLint configuration
 
-**Implementation**: The theme is managed via React Context (`ThemeContext.tsx`) which:
-- Adds/removes `dark-mode` class on `<body>` for CSS targeting (used by Leaflet popups)
-- Sets `data-theme` attribute on `<html>` for potential CSS variable usage
-- Persists user preference to localStorage under key `theme-mode`
-- Falls back to system preference (`prefers-color-scheme`) if no saved preference
+If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
 
-## Development
+```js
+export default defineConfig([
+  globalIgnores(['dist']),
+  {
+    files: ['**/*.{ts,tsx}'],
+    extends: [
+      // Other configs...
 
-### Install Dependencies
-```bash
-npm install
+      // Remove tseslint.configs.recommended and replace with this
+      tseslint.configs.recommendedTypeChecked,
+      // Alternatively, use this for stricter rules
+      tseslint.configs.strictTypeChecked,
+      // Optionally, add this for stylistic rules
+      tseslint.configs.stylisticTypeChecked,
+
+      // Other configs...
+    ],
+    languageOptions: {
+      parserOptions: {
+        project: ['./tsconfig.node.json', './tsconfig.app.json'],
+        tsconfigRootDir: import.meta.dirname,
+      },
+      // other options...
+    },
+  },
+])
 ```
 
-### Environment Variables
-Copy `.env.example` to `.env` and fill in the values:
-```bash
-cp .env.example .env
+You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+
+```js
+// eslint.config.js
+import reactX from 'eslint-plugin-react-x'
+import reactDom from 'eslint-plugin-react-dom'
+
+export default defineConfig([
+  globalIgnores(['dist']),
+  {
+    files: ['**/*.{ts,tsx}'],
+    extends: [
+      // Other configs...
+      // Enable lint rules for React
+      reactX.configs['recommended-typescript'],
+      // Enable lint rules for React DOM
+      reactDom.configs.recommended,
+    ],
+    languageOptions: {
+      parserOptions: {
+        project: ['./tsconfig.node.json', './tsconfig.app.json'],
+        tsconfigRootDir: import.meta.dirname,
+      },
+      // other options...
+    },
+  },
+])
 ```
-
-Required variables:
-- `REACT_APP_API_BASE_URL` - Backend API URL (default: https://hopefornyc.com/api/v1)
-- `REACT_APP_RECAPTCHA_SITE_KEY` - Google reCAPTCHA v2 site key
-
-### Run Development Server
-```bash
-npm start
-```
-
-Runs on [http://localhost:3000](http://localhost:3000)
-
-### Build for Production
-```bash
-npm run build
-```
-
-Creates optimized production build in `build/` directory.
-
-## Deployment
-
-### Production Deployment Location
-
-**IMPORTANT**: The frontend is served by Nginx from `/var/www/hope-frontend/`, NOT from `/home/opc/Hope/frontend/build/`.
-
-To deploy the frontend after building:
-
-```bash
-# Build the frontend
-npm run build
-
-# Deploy to Nginx serving directory (requires sudo)
-sudo rsync -av --delete /home/opc/Hope/frontend/build/ /var/www/hope-frontend/
-```
-
-### Nginx Configuration
-
-The frontend is configured in `/etc/nginx/conf.d/hope-backend.conf`:
-
-- **Static assets** (JS, CSS, images): Cached for 1 year with `Cache-Control: public, immutable`
-- **HTML files**: Cached for 1 hour with `Cache-Control: public, must-revalidate`
-- **Service worker**: No cache (`Cache-Control: no-cache, no-store, must-revalidate`)
-
-### Deployment Checklist
-
-1. Make changes to source code
-2. Build: `npm run build`
-3. Deploy: `sudo rsync -av --delete /home/opc/Hope/frontend/build/ /var/www/hope-frontend/`
-4. Users should hard refresh (Ctrl+Shift+R) to bypass browser cache
-
-## Map Features
-
-### Dark Mode Map Tiles
-The map automatically switches between tile styles based on system theme:
-- **Light mode**: Carto Voyager (streets + navigation style)
-- **Dark mode**: Carto Dark Matter (dark themed map)
-
-### Zoom Level Behavior
-
-- **Zoom 0-7**: No markers shown (too zoomed out - state/country level)
-- **Zoom 8-11**: Markers shown with clustering (numbered circles group nearby locations)
-- **Zoom 12+**: Individual markers shown (no clustering)
-
-This configuration balances performance with usability:
-- Prevents loading all locations when viewing entire country/state
-- Uses clustering to reduce visual clutter at city/metro level
-- Shows individual markers when zoomed in to neighborhood level
-
-### Marker Clustering
-
-Implemented with `react-leaflet-markercluster`:
-- `maxClusterRadius={50}` - Markers within 50px are clustered
-- `disableClusteringAtZoom={12}` - Individual markers at zoom 12+
-- `spiderfyOnMaxZoom={true}` - Spread out overlapping markers when fully zoomed
-- `chunkedLoading` - Improves performance with large datasets
-
-### Filter Bar
-
-The map includes a two-row filter bar at the bottom of the screen:
-
-**Top Row** (scrollable on mobile):
-- **DHS Official** (yellow) - Opens informational card about NYC DHS intake process
-- **Center Button** (🎯) - Centers map on user's current location
-- **Open Now** - Filters to show only locations currently open
-- **Open Today** - Filters to show locations open at any point today
-
-**Category Row** (scrollable):
-- Food (with sub-filters: Hot Meals, Groceries)
-- Intake Center
-- Drop-In Center
-- Mental Health Crisis (with sub-filters: CPEP Emergency, Other Crisis)
-- Youth Services
-- Free WiFi & Charging
-- Benefits & ID Help
-- Case Management
-- Hygiene
-- Medical
-- Hospitals
-- Public Restrooms
-- Warming Center
-- Cooling Center
-- DV Hotline (direct phone link)
-
-Filters update the map in real-time by passing `service_types`, `open_now`, and `open_today` parameters to the backend API.
-
-### DHS Information Card
-Yellow "DHS Official" button opens an informational card with:
-- NYC DHS intake locations and addresses
-- Direct call links for 311 and Safe Horizon hotline
-- Important warnings about the intake process
-
-## Code Organization
-
-### MapScreen Modularization
-The main `MapScreen.tsx` was refactored from ~2000 lines into smaller, focused modules in `screens/map/`:
-
-| Module | Purpose |
-|--------|---------|
-| `mapHelpers.ts` | Types (`ServiceLocation`, `ServiceType`), constants (`API_BASE_URL`, `KM_PER_MILE`), utility functions (icon creation, time formatting, phone validation) |
-| `mapStyles.ts` | All dynamic styles via `getMapStyles(colors, isDark)` function |
-| `DHSInfoCard.tsx` | DHS Safe Options overlay with intake locations and hotlines |
-| `MapControls.tsx` | `MapEventHandler`, `MapCenterController`, `MarkerWithClick` components |
-| `WeeklyHoursDropdown.tsx` | Expandable weekly hours display in popups |
-| `index.ts` | Barrel exports for clean imports |
-
-This structure improves maintainability while keeping the main `MapScreen.tsx` focused on rendering and state management.
-
-## Performance Optimizations
-
-### Frontend
-1. **Marker Clustering**: Reduces DOM nodes from thousands to dozens at metro zoom levels
-2. **Debounced Map Updates**: 400ms debounce prevents excessive API calls during pan/zoom
-3. **Bounding Box Queries**: Only fetches locations visible in current viewport
-4. **Viewport Caching**: Skips API call if viewport is within previously cached bounds
-5. **Memoized Markers**: React.useMemo prevents unnecessary re-renders
-
-### Backend Integration
-The frontend integrates with optimized backend endpoints:
-- `/api/v1/public/services/in-bounds` - Bounding box query with eager loading (1 SQL query instead of 226)
-- Rate limited to 60 requests/minute per IP
-- Redis-backed rate limiting across all uvicorn workers
-
-## Language Support
-
-Full internationalization (i18n) support:
-- **English** (en) - Default
-- **Spanish** (es) - Espanol
-- **Chinese** (zh) - 中文
-- **Arabic** (ar) - العربية (RTL layout)
-- **French** (fr) - Francais
-- **Russian** (ru) - Русский
-- **Haitian Creole** (ht) - Kreyol Ayisyen
-
-Language switcher in header with flag icons. Translations stored in `public/locales/{lang}/translation.json`.
-
-## File Structure
-
-```
-frontend/
-├── public/
-│   ├── locales/           # i18n translation files
-│   │   ├── en/
-│   │   ├── es/
-│   │   ├── zh/
-│   │   ├── ar/
-│   │   ├── fr/
-│   │   ├── ru/
-│   │   └── ht/
-│   ├── favicon*.png       # App icons
-│   └── manifest.json      # PWA manifest
-├── src/
-│   ├── components/        # Reusable components
-│   │   ├── Header.tsx     # App header with language switcher
-│   │   └── BottomNav.tsx  # Bottom navigation bar
-│   ├── screens/
-│   │   ├── MapScreen.tsx  # Main map interface
-│   │   ├── map/           # Map-related modules (extracted for maintainability)
-│   │   │   ├── index.ts           # Barrel exports
-│   │   │   ├── mapHelpers.ts      # Helper functions, types, constants
-│   │   │   ├── mapStyles.ts       # Dynamic style definitions
-│   │   │   ├── DHSInfoCard.tsx    # DHS information overlay component
-│   │   │   ├── MapControls.tsx    # Map event handlers and controllers
-│   │   │   └── WeeklyHoursDropdown.tsx  # Operating hours dropdown
-│   │   ├── AboutScreen.tsx
-│   │   ├── HowItWorksScreen.tsx
-│   │   ├── PrivacyPolicyScreen.tsx
-│   │   ├── TermsOfUseScreen.tsx
-│   │   ├── ReportIssueScreen.tsx
-│   │   └── ProviderPortalScreen.tsx
-│   ├── theme/
-│   │   ├── index.ts       # Color constants, spacing, typography
-│   │   └── ThemeContext.tsx # Dark mode context provider
-│   ├── i18n/
-│   │   └── LanguageContext.tsx # Language context provider
-│   ├── services/
-│   │   └── api.ts         # Backend API client
-│   ├── App.tsx            # Root component with routing
-│   └── index.tsx          # React entry point
-├── .env                   # Environment variables (gitignored)
-├── .env.example           # Environment variables template
-├── build/                 # Production build output (gitignored)
-└── package.json
-```
-
-## Environment Variables
-
-Create a `.env` file with the following variables (see `.env.example`):
-
-```bash
-# API Configuration
-REACT_APP_API_BASE_URL=https://hopefornyc.com/api/v1
-
-# Google reCAPTCHA v2 Configuration
-REACT_APP_RECAPTCHA_SITE_KEY=your-recaptcha-site-key-here
-```
-
-## Browser Support
-
-- Chrome/Edge 90+
-- Firefox 88+
-- Safari 14+
-- Mobile browsers (iOS Safari, Chrome Mobile)
-
-## Known Issues
-
-### Browser Caching
-Due to aggressive browser caching of JavaScript assets (1-year cache), users may need to hard refresh after deployments:
-- **Chrome/Edge/Firefox**: Ctrl+Shift+R (Windows/Linux) or Cmd+Shift+R (Mac)
-- **Safari**: Cmd+Option+R
-- **Or**: Open Developer Tools (F12) -> Right-click refresh -> "Empty Cache and Hard Reload"
-
-The HTML index file has a shorter cache (1 hour) and includes content-based hashes in asset filenames (e.g., `main.9c524db2.js`) which should trigger cache busts on changes, but some browsers may still cache aggressively.
-
-## Security
-
-- Content Security Policy (CSP) configured in Nginx
-- HTTPS enforced (HTTP redirects to HTTPS)
-- No sensitive data stored in frontend
-- All API calls authenticated through CORS headers
-- Permissions Policy restricts geolocation to self-origin only
-- reCAPTCHA protects form submissions from spam
-- Environment variables for sensitive configuration (not hardcoded)
-
-### License & Trademark
-
-The Code: The software source code is licensed under the GNU AGPL v3. You are free to run, study, share, and modify the software. If you run a modified version as a network service, you must share your source code.
-
-The Brand: The name "Hope for NYC", the specific logo, and the domain hopefornyc.com are trademarks of the project maintainers.
-
-- You CAN: Fork this repo to create "Hope for Chicago" or "Hope for Philly."
-- You CANNOT: Host an identical version of this site called "Hope for NYC" that confuses users into thinking it is the official source.
-- You CANNOT: Use our logo or trademarks in a way that implies endorsement.
