@@ -13,8 +13,8 @@ export const DHSInfoCard: React.FC<DHSInfoCardProps> = ({ t, colors, isDark, onC
   const styles = getStyles(colors, isDark);
 
   return (
-    <div style={styles.dhsContainer}>
-      <div style={styles.dhsCard}>
+    <div style={styles.dhsContainer} onClick={onClose}>
+      <div style={styles.dhsCard} onClick={(e) => e.stopPropagation()}>
         <div style={styles.dhsIcon}>🏛️</div>
         <h2 style={styles.dhsTitle}>Safe Options & Intake</h2>
         <h3 style={styles.dhsSubtitle}>{t('officialDHSEntryPoints')}</h3>

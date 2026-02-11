@@ -41,6 +41,9 @@ const Header: React.FC = () => {
       fontSize: TYPOGRAPHY.fontSize.xl,
       fontWeight: TYPOGRAPHY.fontWeight.bold,
       margin: 0,
+      color: colors.textInverse,
+      textDecoration: 'none',
+      cursor: 'pointer',
     },
     rightControls: {
       display: 'flex',
@@ -150,7 +153,9 @@ const Header: React.FC = () => {
           ☰
         </button>
 
-        <h1 style={styles.brandName}>Hope for NYC</h1>
+        <Link to="/" style={styles.brandName}>
+          Hope for NYC
+        </Link>
 
         <div style={styles.rightControls}>
           <button

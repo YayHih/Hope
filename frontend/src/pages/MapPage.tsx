@@ -641,7 +641,7 @@ const MapScreen: React.FC = () => {
           )}
         </div>
 
-        <MapContainer center={userLocation} zoom={13} style={{ height: '100dvh', width: '100%' }} doubleClickZoom={true} scrollWheelZoom={true} touchZoom={true} zoomControl={true}>
+        <MapContainer center={userLocation} zoom={13} style={{ height: '100dvh', width: '100%' }} doubleClickZoom={true} scrollWheelZoom={true} touchZoom={true} zoomControl={true} closePopupOnClick={true}>
           <TileLayer
             attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
             url={isDark ? "https://{s}.basemaps.cartocdn.com/rastertiles/dark_all/{z}/{x}/{y}{r}.png" : "https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png"}
