@@ -27,9 +27,10 @@
 │   │   ├── ReportIssue/
 │   │   │   ├── index.ts
 │   │   │   └── ReportIssue.tsx
-│   │   └── TermsOfUse/
-│   │       ├── index.ts
-│   │       └── TermsOfUse.tsx
+│   │   ├── TermsOfUse/
+│   │   │   ├── index.ts
+│   │   │   └── TermsOfUse.tsx
+│   │   └── index.ts
 │   ├── components/
 │   │   ├── features/
 │   │   │   └── Map/
@@ -55,6 +56,7 @@
 │   │       └── reportStatus/
 │   ├── hooks/
 │   │   ├── useLanguage.ts
+│   │   ├── useMapStyles.ts
 │   │   └── useTheme.ts
 │   ├── services/
 │   │   └── api/
@@ -84,7 +86,12 @@
 │   ├── assets/
 │   │   └── react.svg
 │   ├── index.css
-│   └── main.tsx
+│   ├── main.tsx
+│   └── theme/
+│       ├── colors.ts
+│       ├── index.ts
+│       ├── spacing.ts
+│       └── typography.ts
 ├── tsconfig.app.json
 ├── tsconfig.json
 ├── tsconfig.node.json
